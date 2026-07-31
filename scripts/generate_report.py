@@ -81,9 +81,9 @@ def draft_report(client_name, contact_name, sender_name, summary, period_label):
 
     prompt = f"""You are writing a short, plain-English monthly website health update for a small business client of a freelance web designer. The client is not technical. Be warm but factual, no fluff, no vague marketing language. Focus on business value, not jargon.
 
-This is a one-way informational update, not a conversation — do not ask the client questions or invite them to choose between options; state what will happen next as a plain fact.
+This is a one-way informational update, not a conversation - do not ask the client questions or invite them to choose between options; state what will happen next as a plain fact.
 
-Greet the client as "{contact_name}" and sign off as "{sender_name}". Do not use placeholder text like "Hi there" or "[Your name]" — use the real names given.
+Greet the client as "{contact_name}" and sign off as "{sender_name}". Do not use placeholder text like "Hi there" or "[Your name]" - use the real names given. Use standard hyphens (-) only, never em dashes or en dashes.
 
 Client business: {client_name}
 Contact: {contact_name}
@@ -117,9 +117,12 @@ Write a short update (150-250 words) covering: what was monitored, what's workin
     data = response.json()
     return "".join(block["text"] for block in data["content"] if block["type"] == "text")
 
-def render_email_html(body_markdown, client_name, period_label):
+def render_email_html(body_markdown, client_name, period_label, summary):
     import markdown as md
     content_html = md.markdown(body_markdown, extensions=["nl2br"])
+
+    ssl_display = f"{summary['ssl_days_left_latest']}d" if summary['ssl_days_left_latest'] is not None else "-"
+    speed_display = f"{summary['avg_response_ms']}ms" if summary['avg_response_ms'] is not None else "-"
 
     return f"""\
 <!DOCTYPE html>
@@ -131,19 +134,45 @@ def render_email_html(body_markdown, client_name, period_label):
       <td align="center">
         <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:8px; overflow:hidden; max-width:600px;">
           <tr>
-            <td style="background-color:#101513; padding:24px 32px;">
-              <span style="color:#ffffff; font-size:18px; font-weight:600; letter-spacing:-0.02em;">dm. dmwebservices</span>
+            <td style="background-color:#101513; height:6px; line-height:6px; font-size:0;">&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="padding:28px 32px 8px 32px;">
+              <div style="color:#888888; font-size:12px; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;">Website Health Update</div>
+              <div style="color:#101513; font-size:20px; font-weight:600;">{client_name}</div>
+              <div style="color:#888888; font-size:13px;">{period_label}</div>
             </td>
           </tr>
           <tr>
-            <td style="padding:32px; color:#1a1a1a; font-size:15px; line-height:1.6;">
+            <td style="padding:16px 32px 8px 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td width="33%" align="center" style="background-color:#f9f9f9; border-radius:6px; padding:14px 8px;">
+                    <div style="color:#101513; font-size:20px; font-weight:700;">{summary['uptime_pct']}%</div>
+                    <div style="color:#888888; font-size:11px; text-transform:uppercase; letter-spacing:0.04em; margin-top:2px;">Uptime</div>
+                  </td>
+                  <td width="4%"></td>
+                  <td width="33%" align="center" style="background-color:#f9f9f9; border-radius:6px; padding:14px 8px;">
+                    <div style="color:#101513; font-size:20px; font-weight:700;">{speed_display}</div>
+                    <div style="color:#888888; font-size:11px; text-transform:uppercase; letter-spacing:0.04em; margin-top:2px;">Avg Speed</div>
+                  </td>
+                  <td width="4%"></td>
+                  <td width="33%" align="center" style="background-color:#f9f9f9; border-radius:6px; padding:14px 8px;">
+                    <div style="color:#101513; font-size:20px; font-weight:700;">{ssl_display}</div>
+                    <div style="color:#888888; font-size:11px; text-transform:uppercase; letter-spacing:0.04em; margin-top:2px;">SSL Left</div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 32px 32px 32px; color:#1a1a1a; font-size:15px; line-height:1.6;">
               {content_html}
             </td>
           </tr>
           <tr>
-            <td style="padding:20px 32px; background-color:#f9f9f9; color:#888888; font-size:12px; line-height:1.5;">
-              DM Web Services &middot; Website Health Update &middot; {period_label}<br>
-              Custom web design and upkeep by Danny Manning.
+            <td style="padding:18px 32px; background-color:#f9f9f9; color:#888888; font-size:12px; line-height:1.5; border-top:1px solid #eeeeee;">
+              DM Web Services - dmwebservices.co.uk
             </td>
           </tr>
         </table>
@@ -153,12 +182,12 @@ def render_email_html(body_markdown, client_name, period_label):
 </body>
 </html>"""
 
-def send_email(to_email, to_name, from_email, from_name, subject, body_markdown, client_name, period_label):
+def send_email(to_email, to_name, from_email, from_name, subject, body_markdown, client_name, period_label, summary):
     resend_key = os.environ.get("RESEND_API_KEY")
     if not resend_key:
-        raise RuntimeError("RESEND_API_KEY not set — cannot auto-send.")
+        raise RuntimeError("RESEND_API_KEY not set - cannot auto-send.")
 
-    html_body = render_email_html(body_markdown, client_name, period_label)
+    html_body = render_email_html(body_markdown, client_name, period_label, summary)
     resp = requests.post(
         "https://api.resend.com/emails",
         headers={"Authorization": f"Bearer {resend_key}", "Content-Type": "application/json"},
@@ -180,6 +209,9 @@ def main():
 
     sender_name = business.get("sender_name", "Your web team")
     from_email = business.get("from_email", "")
+    test_mode = business.get("test_mode", False)
+    test_email = business.get("test_email", "")
+    force_send_for_testing = business.get("force_send_for_testing", False)
 
     period_label = datetime.now(timezone.utc).strftime("%B %Y")
     month_str = datetime.now(timezone.utc).strftime("%Y-%m")
@@ -198,14 +230,14 @@ def main():
         summary = summarise(records)
 
         if not summary:
-            print(f"No data yet for {client['name']} — skipping.")
+            print(f"No data yet for {client['name']} - skipping.")
             continue
 
         report_text = draft_report(client["name"], contact_name, sender_name, summary, period_label)
-        hold_reasons = needs_human_review(summary)
+        hold_reasons = [] if force_send_for_testing else needs_human_review(summary)
 
         full_doc = (
-            f"# {client['name']} — Website Health Update ({period_label})\n\n"
+            f"# {client['name']} - Website Health Update ({period_label})\n\n"
             f"{report_text}\n\n---\n"
             f"*Raw data: {summary['checks_run']} automated checks, "
             f"{summary['uptime_pct']}% uptime, {len(summary['issues'])} issue(s) logged.*\n"
@@ -220,26 +252,30 @@ def main():
         if hold_reasons:
             flag_path = f"reports/_review_queue/{client['id']}-{month_str}.md"
             with open(flag_path, "w") as f:
-                f.write(f"HOLD FOR REVIEW — reasons:\n" + "\n".join(f"- {r}" for r in hold_reasons))
+                f.write(f"HOLD FOR REVIEW - reasons:\n" + "\n".join(f"- {r}" for r in hold_reasons))
                 f.write(f"\n\nTo: {contact_email}\n\n{full_doc}")
             print(f"HELD for review ({', '.join(hold_reasons)}): {flag_path}")
             continue
 
-        if not contact_email:
-            print(f"No contact_email set for {client['name']} — cannot auto-send, holding.")
+        send_to = test_email if test_mode else contact_email
+        subject_prefix = "[TEST MODE] " if test_mode else ""
+
+        if not send_to:
+            print(f"No email address available for {client['name']} - cannot auto-send, holding.")
             continue
 
         send_email(
-            to_email=contact_email,
+            to_email=send_to,
             to_name=contact_name,
             from_email=from_email,
             from_name=sender_name,
-            subject=f"{client['name']} — Website Health Update ({period_label})",
+            subject=f"{subject_prefix}{client['name']} - Website Health Update ({period_label})",
             body_markdown=full_doc,
             client_name=client["name"],
             period_label=period_label,
+            summary=summary,
         )
-        print(f"Auto-sent to {contact_email}: {out_path}")
+        print(f"{'TEST-sent' if test_mode else 'Auto-sent'} to {send_to}: {out_path}")
 
 if __name__ == "__main__":
     main()
