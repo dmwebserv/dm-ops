@@ -17,6 +17,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install pyyaml requests
+      - run: pip install pyyaml requests markdown
       - run: python scripts/generate_report.py
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
