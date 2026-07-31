@@ -8,7 +8,7 @@ clients:
     url: https://lwppaintingdecorating.co.uk
     care_plan: true
     contact_name: "Louis"
-    contact_email: "danny@dmwebservices.co.uk"
+    contact_email: "info@lwppaintingdecorating.co.uk"
     notes: ""
 
   - id: kcm
@@ -16,5 +16,5 @@ clients:
     url: https://kcmcleaning.co.uk
     care_plan: true
     contact_name: "Kieran"
-    contact_email: "danny@dmwebservices.co.uk"
+    contact_email: "info@kcmcleaning.co.uk"
     notes: ""
