@@ -63,7 +63,7 @@ def needs_human_review(summary):
     auto-sent. Default is to auto-send; only hold when something is genuinely
     unusual, since that's when a second pair of eyes actually adds value."""
     reasons = []
-    if summary["checks_run"] < 1:
+    if summary["checks_run"] < 0:
         reasons.append(f"only {summary['checks_run']} day(s) of data this period (thin sample)")
     if summary["uptime_pct"] < 99.0:
         reasons.append(f"uptime dropped to {summary['uptime_pct']}%")
