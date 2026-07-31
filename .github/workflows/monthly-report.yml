@@ -1,0 +1,29 @@
+name: Monthly Client Report
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 9 1 * *'  # 9am UTC on the 1st of each month
+
+permissions:
+  contents: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pyyaml requests
+      - run: python scripts/generate_report.py
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - name: Commit reports
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add reports/
+          git diff --staged --quiet || git commit -m "Generate monthly reports"
+          git push
