@@ -1,0 +1,12 @@
+clients:
+  - id: lwp
+    name: LWP Painting & Decorating
+    url: https://lwppaintingdecorating.co.uk
+    care_plan: true
+    notes: ""
+
+  - id: kcm
+    name: KCM Cleaning
+    url: https://kcmcleaning.co.uk
+    care_plan: true
+    notes: ""
