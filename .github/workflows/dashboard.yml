@@ -1,0 +1,30 @@
+name: Business Dashboard
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 7 * * 1'  # weekly, Monday 7am UTC - before the SEO check runs
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pyyaml requests
+      - run: python scripts/generate_dashboard.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit dashboard
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add dashboard/
+          git diff --staged --quiet || git commit -m "Update business dashboard"
+          git push
