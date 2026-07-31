@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>DM Web Services - Business Dashboard</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background:#f4f4f4; margin:0; padding:24px; color:#1a1a1a; }
+  .wrap { max-width:900px; margin:0 auto; }
+  .top { background:#101513; color:#fff; padding:24px 28px; border-radius:8px 8px 0 0; }
+  .top h1 { margin:0; font-size:20px; font-weight:600; }
+  .top .sub { color:#aaa; font-size:12px; margin-top:4px; }
+  .card { background:#fff; padding:28px; border-radius:0 0 8px 8px; margin-bottom:20px; }
+  .stats { display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap; }
+  .stat { background:#f9f9f9; border-radius:6px; padding:16px; flex:1; min-width:120px; text-align:center; }
+  .stat .num { font-size:24px; font-weight:700; color:#101513; }
+  .stat .label { font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#888; margin-top:4px; }
+  h2 { font-size:15px; text-transform:uppercase; letter-spacing:0.04em; color:#888; border-bottom:1px solid #eee; padding-bottom:8px; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th { text-align:left; padding:10px 12px; font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#888; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>DM Web Services - Business Dashboard</h1>
+    <div class="sub">Generated 31 July 2026, 14:29 UTC</div>
+  </div>
+  <div class="card">
+    <div class="stats">
+      <div class="stat"><div class="num">£60</div><div class="label">Monthly Recurring</div></div>
+      <div class="stat"><div class="num">2</div><div class="label">Total Clients</div></div>
+      <div class="stat"><div class="num">2</div><div class="label">Care Plan Clients</div></div>
+      <div class="stat"><div class="num">100.0%</div><div class="label">30-Day Uptime</div></div>
+      <div class="stat"><div class="num">2</div><div class="label">Awaiting Review</div></div>
+      <div class="stat"><div class="num">3</div><div class="label">Open Alerts</div></div>
+    </div>
+
+    <h2>Website Health</h2>
+    <table>
+      <tr><th>Client</th><th>Status</th><th>SSL Left</th><th>Issues</th></tr>
+      
+            <tr>
+              <td style="padding:10px 12px; border-bottom:1px solid #eee;">LWP Painting & Decorating</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #eee;"><span style="color:#2e7d32; font-weight:600;">ok</span></td>
+              <td style="padding:10px 12px; border-bottom:1px solid #eee;">46d</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #eee;">0</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 12px; border-bottom:1px solid #eee;">KCM Cleaning</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #eee;"><span style="color:#f9a825; font-weight:600;">needs_review</span></td>
+              <td style="padding:10px 12px; border-bottom:1px solid #eee;">51d</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #eee;">1</td>
+            </tr>
+    </table>
+
+    <h2 style="margin-top:28px;">Growth Opportunities</h2>
+    <table>
+      <tr><th>Client</th><th>High</th><th>Medium</th><th>Low</th></tr>
+      
+            <tr>
+              <td style="padding:10px 12px; border-bottom:1px solid #eee;">LWP Painting & Decorating</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #eee;">0</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #eee;">1</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #eee;">0</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 12px; border-bottom:1px solid #eee;">KCM Cleaning</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #eee;">0</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #eee;">1</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #eee;">0</td>
+            </tr>
+    </table>
+
+    <h2 style="margin-top:28px;">Automation Activity</h2>
+    <table>
+      <tr><td style="padding:10px 12px; border-bottom:1px solid #eee;">Days of monitoring history</td><td style="padding:10px 12px; border-bottom:1px solid #eee;">1</td></tr>
+      <tr><td style="padding:10px 12px;">Total automated checks run</td><td style="padding:10px 12px;">2</td></tr>
+    </table>
+  </div>
+</div>
+</body>
+</html>
