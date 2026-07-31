@@ -4,6 +4,7 @@ import glob
 import yaml
 import requests
 from datetime import datetime, timezone, timedelta
+from qc_review import qc_review
 
 ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
 DAYS_BACK = 30
@@ -242,6 +243,24 @@ def main():
             f"*Raw data: {summary['checks_run']} automated checks, "
             f"{summary['uptime_pct']}% uptime, {len(summary['issues'])} issue(s) logged.*\n"
         )
+
+        # Second opinion: an independent QC pass on the written content (em
+        # dashes, placeholders, invented figures, tone) - separate from the
+        # data-anomaly checks above. Always run it so you get the finding in
+        # the logs either way; but only let it BLOCK sending outside of test
+        # mode, so force_send_for_testing still shows you the real draft even
+        # if QC has a concern about it (useful for debugging the draft itself).
+        if not hold_reasons:
+            qc_result = qc_review(
+                draft_text=full_doc,
+                source_facts=summary,
+                contact_name=contact_name,
+                sender_name=sender_name,
+            )
+            if not qc_result["passed"]:
+                print(f"QC flagged issues for {client['name']}: {qc_result['issues']}")
+                if not force_send_for_testing:
+                    hold_reasons = [f"QC check failed: {issue}" for issue in qc_result["issues"]]
 
         client_dir = f"reports/{client['id']}"
         os.makedirs(client_dir, exist_ok=True)
