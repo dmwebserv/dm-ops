@@ -3,22 +3,43 @@
     "id": "lwp",
     "name": "LWP Painting & Decorating",
     "url": "https://lwppaintingdecorating.co.uk",
-    "checked_at": "2026-07-31T08:31:37.051080+00:00",
+    "checked_at": "2026-07-31T08:39:06.278194+00:00",
     "status": "ok",
     "http_status": 200,
-    "response_time_ms": 163,
+    "response_time_ms": 88,
     "ssl_days_left": 47,
+    "broken_links": [],
+    "form_check": {
+      "found": true,
+      "count": 1
+    },
     "errors": []
   },
   {
     "id": "kcm",
     "name": "KCM Cleaning",
     "url": "https://kcmcleaning.co.uk",
-    "checked_at": "2026-07-31T08:31:37.316698+00:00",
-    "status": "ok",
+    "checked_at": "2026-07-31T08:39:06.712119+00:00",
+    "status": "needs_review",
     "http_status": 200,
-    "response_time_ms": 171,
+    "response_time_ms": 102,
     "ssl_days_left": 51,
-    "errors": []
+    "broken_links": [
+      {
+        "url": "https://kcmcleaning.co.uk/cdn-cgi/l/email-protection#abc2c5cdc4ebc0c8c6c8c7cecac5c2c5cc85c8c485dec0",
+        "status": 404
+      },
+      {
+        "url": "https://kcmcleaning.co.uk/cdn-cgi/l/email-protection#224b4c444d6249414f414e47434c4b4c450c414d0c5749",
+        "status": 404
+      }
+    ],
+    "form_check": {
+      "found": true,
+      "count": 1
+    },
+    "errors": [
+      "2 broken link(s) found"
+    ]
   }
 ]
