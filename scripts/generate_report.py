@@ -240,8 +240,8 @@ def main():
         full_doc = (
             f"# {client['name']} - Website Health Update ({period_label})\n\n"
             f"{report_text}\n\n---\n"
-            f"*Raw data: {summary['checks_run']} automated checks, "
-            f"{summary['uptime_pct']}% uptime, {len(summary['issues'])} issue(s) logged.*\n"
+            f"*Raw data: {summary['checks_run']} automated check{'s' if summary['checks_run'] != 1 else ''}, "
+            f"{summary['uptime_pct']}% uptime, {len(summary['issues'])} issue{'s' if len(summary['issues']) != 1 else ''} logged.*\n"
         )
 
         # Second opinion: an independent QC pass on the written content (em
