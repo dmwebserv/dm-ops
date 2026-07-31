@@ -99,9 +99,15 @@ def main():
     with open('clients.yaml') as f:
         data = yaml.safe_load(f)
     results = [check_site(c) for c in data['clients']]
+
     with open('logs/latest.json', 'w') as f:
         json.dump(results, f, indent=2)
+
+    date_str = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    import os
+    os.makedirs('logs/history', exist_ok=True)
+    with open(f'logs/history/{date_str}.json', 'w') as f:
+        json.dump(results, f, indent=2)
+
     print(json.dumps(results, indent=2))
 
-if __name__ == "__main__":
-    main()
