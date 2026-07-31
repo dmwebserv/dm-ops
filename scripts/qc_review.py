@@ -33,7 +33,7 @@ def qc_review(draft_text, source_facts, contact_name, sender_name):
 
 Check specifically for ALL of the following, and list every one that applies:
 
-1. Em dashes or en dashes anywhere (only standard hyphens are allowed).
+1. Actual em dash (—) or en dash (–) characters anywhere. Standard hyphens (-), including when used with spaces around them as a sentence break (e.g. "the site was fine - no issues"), are completely acceptable and must NOT be flagged - only flag the literal — or – characters.
 2. Placeholder or template text left in (e.g. "[Your name]", "Hi there" instead of a real name, "[Client Name]", or similar).
 3. Any figure, statistic, date, or claim in the draft that does NOT appear in the source facts provided below (i.e. invented or hallucinated data).
 4. The draft asking the reader a question or inviting them to choose between options (this should be a one-way statement, not a conversation starter).
