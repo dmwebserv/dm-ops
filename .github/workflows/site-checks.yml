@@ -3,7 +3,11 @@ name: Site Checks
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 8 * * *'  # daily at 8am UTC
+    - cron: '0 8 * * *'
+
+permissions:
+  contents: write
+  issues: write
 
 jobs:
   check:
@@ -15,6 +19,9 @@ jobs:
           python-version: '3.11'
       - run: pip install pyyaml requests
       - run: python scripts/check_sites.py
+      - run: python scripts/notify.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Commit results
         run: |
           git config user.name "github-actions"
