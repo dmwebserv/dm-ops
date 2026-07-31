@@ -110,4 +110,6 @@ def main():
         json.dump(results, f, indent=2)
 
     print(json.dumps(results, indent=2))
+    if __name__ == "__main__":
+    main()
 
