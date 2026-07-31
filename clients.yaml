@@ -1,6 +1,9 @@
 business:
   sender_name: Danny
   from_email: updates@updates.dmwebservices.co.uk
+  test_mode: true
+  test_email: danny@dmwebservices.co.uk
+  force_send_for_testing: true
 
 clients:
   - id: lwp
@@ -18,3 +21,5 @@ clients:
     contact_name: "Kieran"
     contact_email: "info@kcmcleaning.co.uk"
     notes: ""
+
+
