@@ -1,0 +1,22 @@
+HOLD FOR REVIEW - reason: social drafts always need a human pass (photo pairing, tone check) before posting.
+
+# KCM Cleaning - Social Post Drafts (July 2026)
+
+**Post 1: Specific service - pole-fed window cleaning**
+Water-fed pole cleaning means we can reach upper windows safely from the ground, without ladders against your property. Works for homes and businesses across Frinton, Walton and Clacton. Get in touch if you want a quote - call or WhatsApp 07533 407765.
+Suggested image: a photo of the pole and equipment in use, ideally showing an upper-floor window being cleaned
+
+---
+
+**Post 2: Trust and local credibility**
+KCM covers Frinton, Walton and Clacton for regular window cleaning rounds, one-off cleans, gutter clearing and fascia work. We keep a set round day for regular customers, so you know when to expect us and do not have to chase. Larger commercial jobs and contract work can also be considered - just send an enquiry with the details.
+Suggested image: a clean, tidy exterior shot of a local property with freshly cleaned windows, showing the finished result
+
+---
+
+**Post 3: Clear call to action**
+If your gutters or windows have not been touched in a while, now is a good time to sort it before the weather turns. We offer one-off cleans with no ongoing commitment, or you can join a regular round - whichever suits. Drop us a message on WhatsApp or fill in the quote form at kcmcleaning.co.uk.
+Suggested image: a before-and-after shot of a dirty vs cleaned gutter or window, taken at the same property
+
+---
+*Drafted from current website content. Pair with real photos before posting - do not post without reviewing and adding actual images.*
