@@ -1,0 +1,28 @@
+[
+  {
+    "id": "lwp",
+    "name": "LWP Painting & Decorating",
+    "url": "https://lwppaintingdecorating.co.uk",
+    "checked_at": "2026-07-31T14:26:07.526306+00:00",
+    "findings": [
+      {
+        "severity": "medium",
+        "area": "meta_description",
+        "detail": "Meta description is 206 characters (ideal range: 50-160)."
+      }
+    ]
+  },
+  {
+    "id": "kcm",
+    "name": "KCM Cleaning",
+    "url": "https://kcmcleaning.co.uk",
+    "checked_at": "2026-07-31T14:26:07.903858+00:00",
+    "findings": [
+      {
+        "severity": "medium",
+        "area": "meta_description",
+        "detail": "Meta description is 212 characters (ideal range: 50-160)."
+      }
+    ]
+  }
+]
