@@ -117,12 +117,48 @@ Write a short update (150-250 words) covering: what was monitored, what's workin
     data = response.json()
     return "".join(block["text"] for block in data["content"] if block["type"] == "text")
 
-def send_email(to_email, to_name, from_email, from_name, subject, body_markdown):
+def render_email_html(body_markdown, client_name, period_label):
+    import markdown as md
+    content_html = md.markdown(body_markdown, extensions=["nl2br"])
+
+    return f"""\
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="margin:0; padding:0; background-color:#f4f4f4; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4; padding:24px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:8px; overflow:hidden; max-width:600px;">
+          <tr>
+            <td style="background-color:#101513; padding:24px 32px;">
+              <span style="color:#ffffff; font-size:18px; font-weight:600; letter-spacing:-0.02em;">dm. dmwebservices</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:32px; color:#1a1a1a; font-size:15px; line-height:1.6;">
+              {content_html}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 32px; background-color:#f9f9f9; color:#888888; font-size:12px; line-height:1.5;">
+              DM Web Services &middot; Website Health Update &middot; {period_label}<br>
+              Custom web design and upkeep by Danny Manning.
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>"""
+
+def send_email(to_email, to_name, from_email, from_name, subject, body_markdown, client_name, period_label):
     resend_key = os.environ.get("RESEND_API_KEY")
     if not resend_key:
         raise RuntimeError("RESEND_API_KEY not set — cannot auto-send.")
 
-    html_body = body_markdown.replace("\n", "<br>")
+    html_body = render_email_html(body_markdown, client_name, period_label)
     resp = requests.post(
         "https://api.resend.com/emails",
         headers={"Authorization": f"Bearer {resend_key}", "Content-Type": "application/json"},
@@ -200,6 +236,8 @@ def main():
             from_name=sender_name,
             subject=f"{client['name']} — Website Health Update ({period_label})",
             body_markdown=full_doc,
+            client_name=client["name"],
+            period_label=period_label,
         )
         print(f"Auto-sent to {contact_email}: {out_path}")
 
