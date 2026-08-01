@@ -22,8 +22,5 @@ clients:
     contact_name: "Kieran"
     contact_email: "info@kcmcleaning.co.uk"
     notes: ""
-    competitors:
-      - name: "Test Rival"
-        url: "https://example.com"
 
 
