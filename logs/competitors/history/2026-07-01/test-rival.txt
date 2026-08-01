@@ -1,1 +1,0 @@
-This is placeholder text used for testing the competitor diff detection pipeline before real content was captured.
