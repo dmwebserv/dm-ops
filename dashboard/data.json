@@ -76,25 +76,8 @@
     }
   ],
   "competitors": {
-    "configured": true,
-    "records": [
-      {
-        "name": "Test Rival",
-        "url": "https://example.com",
-        "status": "changed",
-        "compared_to": "2026-07-01",
-        "lines_captured": 1,
-        "added_count": 1,
-        "removed_count": 1,
-        "added": [
-          "This domain is for use in documentation examples without needing permission. Avoid use in operations."
-        ],
-        "removed": [
-          "This is placeholder text used for testing the competitor diff detection pipeline before real content was captured."
-        ],
-        "truncated": false
-      }
-    ]
+    "configured": false,
+    "records": []
   },
   "runs": {
     "claude.yml": {
@@ -109,8 +92,8 @@
     },
     "dashboard.yml": {
       "state": "in_progress",
-      "when": "2026-08-01T23:54:25Z",
-      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30724221354"
+      "when": "2026-08-01T23:55:43Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30724262722"
     },
     "growth-report.yml": {
       "state": "success",
@@ -154,17 +137,12 @@
     },
     {
       "weight": 3,
-      "label": "11 items waiting for you to read",
+      "label": "10 items waiting for you to read",
       "detail": "Reports held back rather than sent automatically",
       "view": "queue"
     }
   ],
   "queue": [
-    {
-      "file": "business-competitors-2026-08.md",
-      "kind": "Competitor brief",
-      "reason": "internal competitor briefing, for your eyes only and never sent to anyone."
-    },
     {
       "file": "kcm-2026-07.md",
       "kind": "Client report",
