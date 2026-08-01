@@ -11,7 +11,7 @@ def main():
 
     flagged = [r for r in results if r["status"] != "ok"]
     if not flagged:
-        print("All sites OK — no issue created.")
+        print("All sites OK - no issue created.")
         return
 
     urgent = [r for r in flagged if r["status"] == "urgent"]
