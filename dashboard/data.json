@@ -76,7 +76,7 @@
     }
   ],
   "competitors": {
-    "configured": true,
+    "configured": false,
     "records": []
   },
   "runs": {
@@ -92,8 +92,8 @@
     },
     "dashboard.yml": {
       "state": "in_progress",
-      "when": "2026-08-01T23:19:11Z",
-      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30723095621"
+      "when": "2026-08-01T23:21:03Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30723154128"
     },
     "growth-report.yml": {
       "state": "success",
