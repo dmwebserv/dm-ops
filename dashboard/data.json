@@ -76,14 +76,42 @@
     }
   ],
   "competitors": {
-    "configured": false,
-    "records": []
+    "configured": true,
+    "records": [
+      {
+        "name": "Test Rival",
+        "url": "https://example.com",
+        "status": "changed",
+        "compared_to": "2026-07-01",
+        "lines_captured": 1,
+        "added_count": 1,
+        "removed_count": 1,
+        "added": [
+          "This domain is for use in documentation examples without needing permission. Avoid use in operations."
+        ],
+        "removed": [
+          "This is placeholder text used for testing the competitor diff detection pipeline before real content was captured."
+        ],
+        "truncated": false,
+        "client_name": "KCM Cleaning"
+      }
+    ]
   },
   "runs": {
+    "claude.yml": {
+      "state": "success",
+      "when": "2026-08-01T22:55:16Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30722280985"
+    },
+    "competitor-intel.yml": {
+      "state": "success",
+      "when": "2026-08-01T23:17:32Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30723029142"
+    },
     "dashboard.yml": {
       "state": "in_progress",
-      "when": "2026-08-01T22:10:32Z",
-      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30720691191"
+      "when": "2026-08-01T23:18:12Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30723064996"
     },
     "growth-report.yml": {
       "state": "success",
@@ -92,8 +120,8 @@
     },
     "monthly-report.yml": {
       "state": "success",
-      "when": "2026-08-01T10:40:11Z",
-      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30696134055"
+      "when": "2026-08-01T23:06:51Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30722647228"
     },
     "seo-checks.yml": {
       "state": "success",
@@ -127,7 +155,7 @@
     },
     {
       "weight": 3,
-      "label": "10 items waiting for you to read",
+      "label": "11 items waiting for you to read",
       "detail": "Reports held back rather than sent automatically",
       "view": "queue"
     }
@@ -137,6 +165,11 @@
       "file": "kcm-2026-07.md",
       "kind": "Client report",
       "reason": "Held for review"
+    },
+    {
+      "file": "kcm-competitors-2026-08.md",
+      "kind": "Competitor brief",
+      "reason": "internal competitor briefing, for your eyes only and never sent to anyone."
     },
     {
       "file": "kcm-growth-2026-07.md",
