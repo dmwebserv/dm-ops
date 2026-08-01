@@ -1,22 +1,26 @@
 HOLD FOR REVIEW - reason: social drafts always need a human pass (photo pairing, tone check) before posting.
 
+QC flagged:
+- 'pricing is confirmed before we book anything in' — not supported by source facts, invented claim.
+- 'kcmcleaning.co.uk' — website URL not present in source facts, invented data.
+
 # KCM Cleaning - Social Post Drafts (August 2026)
 
 **Post 1: Specific service - pole-fed window cleaning**
-Water-fed pole cleaning means upper windows get a proper clean without anyone going up a ladder - better reach, safer, and a streak-free result. Works for homes and businesses across Frinton, Walton and Clacton. Get in touch for a quote.
-Suggested image: A photo of the pole and equipment in use on a house, ideally showing an upper floor window being cleaned.
+Water-fed pole cleaning means we can reach upper windows safely from the ground, without ladders against your property. Works for homes and businesses across Frinton, Walton and Clacton. Get in touch for a quote - call or WhatsApp 07533 407765.
+Suggested image: a photo of the water-fed pole in use, showing reach to an upper-floor window
 
 ---
 
-**Post 2: Trust and local credibility**
-KCM covers Frinton, Walton and Clacton with regular window cleaning rounds, one-off cleans and commercial work - all from a local operator who knows the area. If you're not sure what you need, send an enquiry with a few details about your property and KCM will point you in the right direction.
-Suggested image: A photo of a clean, finished window or exterior on a recognisable local street or property type.
+**Post 2: Trust and credibility - local regular rounds**
+We run regular cleaning rounds across Frinton, Walton and Clacton, so you get a set day and windows that stay on top of things rather than being left until they're noticeably grubby. One-off cleans are available too if you just need a freshen up before a sale or a visit. Either way, pricing is confirmed before we book anything in.
+Suggested image: a clean, clear window shot from outside a local terraced or semi-detached home
 
 ---
 
-**Post 3: Clear call to action - gutter cleaning**
-Blocked gutters can lead to overflow and damp problems that are expensive to fix. KCM can clear them out as a one-off job or add it on to a regular window cleaning round. Call 07533 407765 or send a WhatsApp to get a quote sorted.
-Suggested image: A before-and-after shot of a blocked versus cleared gutter, or a close-up of a clean roofline after the job.
+**Post 3: Call to action - gutters and fascias**
+Blocked gutters can cause overflow and damp problems that are a lot more hassle to sort later. KCM cleans gutters, fascias and soffits alongside window cleaning, so it is straightforward to get the whole exterior sorted in one go. Send a message on WhatsApp or fill in the quick quote form at kcmcleaning.co.uk.
+Suggested image: a before-and-after shot of a gutter or fascia clean showing the difference
 
 ---
 *Drafted from current website content. Pair with real photos before posting - do not post without reviewing and adding actual images.*
