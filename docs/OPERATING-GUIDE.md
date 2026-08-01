@@ -20,7 +20,7 @@ schedule or manually via **Actions tab -> select workflow -> Run workflow**.
 | `growth-report.yml` | Monthly, 1st at 9am UTC | Reads the latest SEO findings, asks Claude to pick the top 3 highest-impact actions per client in plain English. Always held for review (doubles as sales/upsell material). | `reports/{client_id}/growth-YYYY-MM.md`, `reports/_review_queue/{client_id}-growth-YYYY-MM.md` |
 | `monthly-report.yml` | Monthly, 1st at 9am UTC | Reads the last 30 days of site-check history, calculates real numbers (uptime %, avg response time, SSL days left, issues), drafts a plain-English health update, runs it through QC, and either emails it (via Resend) or holds it for review if something's anomalous or QC has a real concern. | `reports/{client_id}/YYYY-MM.md`, sometimes `reports/_review_queue/{client_id}-YYYY-MM.md`, an outbound email |
 | `social-drafts.yml` | Monthly, 1st at 9am UTC | Fetches each client's own homepage, drafts 3 social post captions grounded in real site content. Always held for review (needs a human pass + real photos before posting - never auto-posted anywhere). | `reports/{client_id}/social-YYYY-MM.md`, `reports/_review_queue/{client_id}-social-YYYY-MM.md` |
-| `competitor-intel.yml` | Monthly, 1st at 6am UTC (ahead of the 9am reports) | For any client with a `competitors:` list in `clients.yaml`, fetches each competitor URL, diffs against the last snapshot, and - only for genuine detected changes - drafts a short internal briefing. Does nothing at all if no client has competitors configured. | `logs/competitors/history/YYYY-MM-DD/*.txt`, `logs/competitors/latest.json`, `reports/_review_queue/{client_id}-competitors-YYYY-MM.md` (only when something changed) |
+| `competitor-intel.yml` | Monthly, 1st at 6am UTC (ahead of the 9am reports) | Competitors belong to DM Web Services, not to individual clients. If `business.competitors` is configured in `clients.yaml`, fetches each competitor URL, diffs against the last snapshot, and - only for genuine detected changes - drafts a single internal briefing about DM Web Services' own market. Does nothing at all if no competitors are configured. | `logs/competitors/history/YYYY-MM-DD/*.txt`, `logs/competitors/latest.json`, `reports/_business/competitors-YYYY-MM.md`, `reports/_review_queue/business-competitors-YYYY-MM.md` (only when something changed) |
 | `dashboard.yml` | Weekly, Monday 7am UTC | Rebuilds a single-page console: revenue, client health, uptime history, SEO findings, competitor watch, review queue, and live pass/fail status of every workflow above (via the GitHub Actions API). | `dashboard/index.html`, `dashboard/data.json` |
 
 There's an eighth workflow, `claude.yml`, which is not part of the business automation -
@@ -31,8 +31,9 @@ and `issues: opened/assigned`.
 ## Data flow: what writes where
 
 **Inputs** (you edit these):
-- `clients.yaml` - the only file you should routinely hand-edit. Client register, business
-  config (sender name, test mode, care plan pricing), and per-client `competitors:` lists.
+- `clients.yaml` - the only file you should routinely hand-edit. Client register, and
+  business config (sender name, test mode, care plan pricing, `business.competitors` -
+  see "How to add a competitor" below).
 
 **Working data** (machine-written, safe to delete and let regenerate - except history, which
 is cheap to keep and expensive to lose):
@@ -40,20 +41,25 @@ is cheap to keep and expensive to lose):
   input to `monthly-report.yml`'s 30-day rollup; losing recent history thins that data and
   can trigger a "thin sample" hold.
 - `logs/seo/latest.json`, `logs/seo/history/YYYY-MM-DD.json` - SEO scan results.
-- `logs/competitors/history/YYYY-MM-DD/{client_id}-{competitor-slug}.txt`,
-  `logs/competitors/latest.json` - competitor page snapshots and the latest diff. The most
+- `logs/competitors/history/YYYY-MM-DD/{competitor-slug}.txt`,
+  `logs/competitors/latest.json` - competitor page snapshots and the latest diff (business-
+  level - one snapshot set for DM Web Services' own market, not per client). The most
   recent dated folder *before today* is what tomorrow's run diffs against - don't delete the
   most recent history folder or the next run will treat it as a fresh baseline.
 
 **Outputs** (the actual deliverables):
 - `reports/{client_id}/YYYY-MM.md`, `reports/{client_id}/growth-YYYY-MM.md`,
-  `reports/{client_id}/social-YYYY-MM.md` - every report ever generated, sent or held. This
-  is the permanent archive. Nothing in this repo ever deletes from here automatically.
+  `reports/{client_id}/social-YYYY-MM.md` - every per-client report ever generated, sent or
+  held. This is the permanent archive. Nothing in this repo ever deletes from here
+  automatically.
+- `reports/_business/competitors-YYYY-MM.md` - the same permanent archive, but for the
+  business-level competitor briefing (there's no client to file it under).
 - Outbound emails via Resend (monthly health reports only - nothing else sends anywhere).
 
 **Review queue** (transient, the one place designed to be cleared):
-- `reports/_review_queue/{client_id}[-growth|-social|-competitors]-YYYY-MM.md` - copies of
-  held reports, for you to read. See "Clear the review queue" below.
+- `reports/_review_queue/{client_id}[-growth|-social]-YYYY-MM.md`,
+  `reports/_review_queue/business-competitors-YYYY-MM.md` - copies of held reports, for you
+  to read. See "Clear the review queue" below.
 
 **Dashboard** (a read-only view built from everything above):
 - `dashboard/index.html`, `dashboard/data.json` - rebuilt weekly from `clients.yaml`, all
@@ -89,19 +95,22 @@ generating or sending reports for them.
 
 ## How to add a competitor
 
-Add a `competitors:` list under the relevant client in `clients.yaml`:
+Competitors belong to DM Web Services, not to any individual client - this tracks who DM
+Web Services competes with (other web design studios), not a client's own trade rivals.
+Add to `business.competitors` in `clients.yaml`:
 
 ```yaml
-  - id: kcm
-    ...
-    competitors:
-      - name: "Some Local Decorator"
-        url: "https://example.co.uk"
+business:
+  ...
+  competitors:
+    - name: "Some Local Studio"
+      url: "https://example.co.uk"
 ```
 
 The first `competitor-intel.yml` run after adding one records a baseline only (no briefing).
-The next run compares against it and drafts a briefing only if something commercially
-meaningful actually changed - see "Known limits" below for what it can and can't see.
+The next run compares against it and drafts a single briefing - covering every competitor
+that changed, not one per competitor - only if something commercially meaningful actually
+changed. See "Known limits" below for what it can and can't see.
 
 ## How to clear the review queue
 
@@ -165,8 +174,8 @@ At the current scale (2 care-plan clients, competitor tracking off):
   tier for a private repo.
 - **Anthropic API**: roughly a dozen short Claude calls a month (report/growth/social
   drafting plus their QC passes) - a few pence to low single-figure pounds a month.
-  Competitor briefings only add calls for clients with competitors configured *and* an
-  actual detected change, so this stays near zero until you turn that on.
+  The competitor briefing only adds calls once `business.competitors` is populated *and*
+  something actually changed, so this stays near zero until you turn that on.
 - **Resend**: free - miles under the 3,000 email/month free tier at this client count.
 - **Total: realistically £0-5/month**, scaling roughly linearly with client count (a few
   more Claude calls and site checks per client added) - Actions and Resend both have enough
