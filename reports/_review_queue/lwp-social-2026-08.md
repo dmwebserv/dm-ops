@@ -1,0 +1,22 @@
+HOLD FOR REVIEW - reason: social drafts always need a human pass (photo pairing, tone check) before posting.
+
+# LWP Painting & Decorating - Social Post Drafts (August 2026)
+
+**Post 1: Specific service - wall panelling**
+Custom picture-style wall panelling, finished in Dulux Trade Egyptian Cotton. It's one of those jobs that changes the feel of a room completely - and the prep and painting matter just as much as the panels themselves. Based in Essex and Suffolk - get in touch if you've got something similar in mind.
+Suggested image: a finished wall panelling shot, ideally showing the paint finish and panel detail clearly
+
+---
+
+**Post 2: Trust and credibility - customer reviews**
+"His quality of work was impeccable, quick to communicate and offered a very competitive quote. He will be the first person I call." - Talya, Harwich. Straightforward to deal with and the work is done properly - that's what most people want from a decorator, and it's what LWP aims to deliver every time.
+Suggested image: a clean, finished interior shot from a real project - ideally a bedroom or similar space that reflects the kind of work mentioned
+
+---
+
+**Post 3: Call to action - exteriors and larger projects**
+If you've got an exterior repaint, new build or renovation coming up this year, now's a good time to get a quote in. LWP covers exteriors, site work and full-property jobs across Essex and Suffolk - free site visit, no obligation. Drop a message or call 07757 794585.
+Suggested image: an exterior repaint in progress or a finished exterior - front of house, fascias, or rendered walls work well
+
+---
+*Drafted from current website content. Pair with real photos before posting - do not post without reviewing and adding actual images.*
