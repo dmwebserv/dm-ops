@@ -6,17 +6,19 @@ dated snapshot, and diffs it against the most recent previous snapshot for that
 same competitor. The point is to answer "what did they change since last time",
 not "what does their site say" - so the output is a diff, not a scrape.
 
-Competitors are optional per-client config in clients.yaml:
+Competitors belong to DM Web Services itself, not to any individual client -
+other web design studios are who DM Web Services competes with; a client's
+own trade rivals are a different thing entirely and aren't tracked here.
+Config is business-level in clients.yaml:
 
-    clients:
-      - id: lwp
-        competitors:
-          - name: Some Local Decorator
-            url: https://example.co.uk
+    business:
+      competitors:
+        - name: Some Local Studio
+          url: https://example.co.uk
 
-If no client has any competitors configured, this does nothing at all - no
-directories, no files, no output beyond a note. That is the expected state
-until competitors are actually known.
+If none are configured, this does nothing at all - no directories, no files,
+no output beyond a note. That is the expected state until competitors are
+actually known.
 
 Marketing pages are full of boilerplate that churns without meaning (cookie
 banners, copyright years, nav text), so lines are noise-filtered before diffing.
@@ -174,7 +176,7 @@ def diff_lines(old_lines, new_lines):
     return added, removed
 
 
-def check_competitor(client_id, competitor, today_str):
+def check_competitor(competitor, today_str):
     name = competitor.get("name")
     url = competitor.get("url")
     if not name or not url:
@@ -194,7 +196,7 @@ def check_competitor(client_id, competitor, today_str):
         result.update({"status": "error", "error": error})
         return result
 
-    snapshot_name = f"{client_id}-{slugify(name)}.txt"
+    snapshot_name = f"{slugify(name)}.txt"
     day_dir = os.path.join(HISTORY_DIR, today_str)
     os.makedirs(day_dir, exist_ok=True)
     with open(os.path.join(day_dir, snapshot_name), "w") as f:
@@ -225,36 +227,28 @@ def check_competitor(client_id, competitor, today_str):
 
 def main():
     with open("clients.yaml") as f:
-        clients = yaml.safe_load(f)["clients"]
+        business = yaml.safe_load(f).get("business", {})
 
-    tracked = [(c, c.get("competitors") or []) for c in clients]
-    tracked = [(c, comps) for c, comps in tracked if comps]
+    competitors = business.get("competitors") or []
 
-    if not tracked:
+    if not competitors:
         print("No competitors configured in clients.yaml - nothing to check.")
         return
 
     now = datetime.now(timezone.utc)
     today_str = now.strftime("%Y-%m-%d")
 
-    client_results = []
-    for client, competitors in tracked:
-        results = [check_competitor(client["id"], comp, today_str) for comp in competitors]
-        for r in results:
-            detail = r.get("error") or f"{r.get('added_count', 0)} added, {r.get('removed_count', 0)} removed"
-            print(f"{client['name']} / {r['name']}: {r['status']} ({detail})")
-        client_results.append({
-            "id": client["id"],
-            "name": client["name"],
-            "competitors": results,
-        })
+    results = [check_competitor(comp, today_str) for comp in competitors]
+    for r in results:
+        detail = r.get("error") or f"{r.get('added_count', 0)} added, {r.get('removed_count', 0)} removed"
+        print(f"{r['name']}: {r['status']} ({detail})")
 
     os.makedirs(os.path.dirname(LATEST_PATH), exist_ok=True)
     with open(LATEST_PATH, "w") as f:
         json.dump({
             "checked_at": now.isoformat(),
             "date": today_str,
-            "clients": client_results,
+            "competitors": results,
         }, f, indent=2)
 
     print(f"Wrote {LATEST_PATH}")

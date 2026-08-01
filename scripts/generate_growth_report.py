@@ -15,7 +15,7 @@ def load_latest_findings(client_id):
             return r
     return None
 
-def draft_growth_report(client_name, findings):
+def draft_growth_report(client_name, contact_name, sender_name, findings):
     if not findings:
         return None
 
@@ -25,7 +25,11 @@ def draft_growth_report(client_name, findings):
 
     prompt = f"""You are a website growth advisor writing a short, prioritised action list for a small business client. The client is not technical. Use plain English, standard hyphens only (never em dashes or en dashes), and focus on business impact, not jargon.
 
-Client: {client_name}
+Greet the client as "{contact_name}" and sign off as "{sender_name}". Do not use placeholder text like "Hi there" or "[Your name]" - use the real names given.
+
+Client business: {client_name}
+Contact: {contact_name}
+Sent by: {sender_name}
 
 Raw technical findings from an automated website scan (severity: high/medium/low):
 {findings_text}
@@ -51,7 +55,11 @@ Task: pick the THREE actions most likely to improve this website's search visibi
 
 def main():
     with open("clients.yaml") as f:
-        clients = yaml.safe_load(f)["clients"]
+        config = yaml.safe_load(f)
+        clients = config["clients"]
+        business = config.get("business", {})
+
+    sender_name = business.get("sender_name", "Your web team")
 
     period_label = datetime.now(timezone.utc).strftime("%B %Y")
     month_str = datetime.now(timezone.utc).strftime("%Y-%m")
@@ -62,12 +70,14 @@ def main():
         if not client.get("care_plan"):
             continue
 
+        contact_name = client.get("contact_name") or client["name"]
+
         findings_record = load_latest_findings(client["id"])
         if not findings_record or not findings_record.get("findings"):
             print(f"No SEO findings for {client['name']} - skipping (may already be clean).")
             continue
 
-        report_text = draft_growth_report(client["name"], findings_record["findings"])
+        report_text = draft_growth_report(client["name"], contact_name, sender_name, findings_record["findings"])
         if not report_text:
             continue
 
@@ -81,10 +91,15 @@ def main():
         # adds value: the review-queue note tells you exactly what to check
         # instead of you having to spot it yourself.
         qc_result = qc_review(
-            draft_text=full_doc,
-            source_facts={"findings": findings_record["findings"]},
-            contact_name=client["name"],
-            sender_name="Danny",
+            draft_text=report_text,
+            source_facts={
+                "findings": findings_record["findings"],
+                "client_name": client["name"],
+                "contact_name": contact_name,
+                "sender_name": sender_name,
+            },
+            contact_name=contact_name,
+            sender_name=sender_name,
         )
         qc_note = ""
         if not qc_result["passed"]:

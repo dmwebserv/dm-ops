@@ -259,7 +259,7 @@ def main():
         # if QC has a concern about it (useful for debugging the draft itself).
         if not hold_reasons:
             qc_result = qc_review(
-                draft_text=full_doc,
+                draft_text=report_text,
                 source_facts={
                     **summary,
                     "reporting_period": period_label,
