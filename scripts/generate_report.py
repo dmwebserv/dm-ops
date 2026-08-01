@@ -260,7 +260,13 @@ def main():
         if not hold_reasons:
             qc_result = qc_review(
                 draft_text=full_doc,
-                source_facts=summary,
+                source_facts={
+                    **summary,
+                    "reporting_period": period_label,
+                    "client_name": client["name"],
+                    "contact_name": contact_name,
+                    "sender_name": sender_name,
+                },
                 contact_name=contact_name,
                 sender_name=sender_name,
             )
