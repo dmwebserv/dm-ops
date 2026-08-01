@@ -1,0 +1,32 @@
+name: Competitor Intelligence
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 1 * *'  # monthly, 1st at 6am UTC - ahead of the 9am report runs
+
+permissions:
+  contents: write
+
+jobs:
+  competitors:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pyyaml requests
+      - name: Check competitor sites for changes
+        run: python scripts/competitor_check.py
+      - name: Draft internal competitor briefings
+        run: python scripts/generate_competitor_report.py
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - name: Commit snapshots and briefings
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add logs/competitors/ reports/
+          git diff --staged --quiet || git commit -m "Competitor intelligence check"
+          git push
