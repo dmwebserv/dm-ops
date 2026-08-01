@@ -99,7 +99,14 @@ Data:
 - Issues detected during this period:
 {issues_text}
 
-Write a short update (150-250 words) covering: what was monitored, what's working well, anything that needed attention (and whether it's been resolved or still needs a look, stated as fact not a question), and one sentence on what's next. Do not invent any figures not given above. If there were no issues, say so plainly and positively without over-claiming."""
+Write a short update (150-250 words) covering: what was monitored, what's working well, anything that needed attention, and one sentence on what's next. If there were no issues, say so plainly and positively without over-claiming.
+
+Critical accuracy rules, these override tone:
+- The data above is automated monitoring only. It records what was DETECTED. It contains no record of any repair work.
+- Therefore never state or imply that an issue has been fixed, resolved, actioned, or taken care of. Say it "has been flagged" or "is being looked into", never that it is done.
+- Never promise a specific future date, deadline, or completion time.
+- Never state a calendar date that is not given above. If told a number of days, say the number of days, do not convert it into a month or date.
+- Do not invent any figure not given above."""
 
     response = requests.post(
         "https://api.anthropic.com/v1/messages",
