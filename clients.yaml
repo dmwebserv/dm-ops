@@ -4,6 +4,7 @@ business:
   test_mode: true
   test_email: danny@dmwebservices.co.uk
   force_send_for_testing: true
+  care_plan_monthly_value: 30
 
 clients:
   - id: lwp
