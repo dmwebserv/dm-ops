@@ -49,15 +49,17 @@ Draft to review:
 {draft_text}
 ---
 
-Respond with ONLY valid JSON, no other text, no markdown code fences, in this exact shape:
+First, think through each of the seven checks in plain text. Work out what is and is not a genuine problem here. Take as long as you need.
+
+Then, on a new line, output your conclusion as a single JSON object and nothing after it:
 {{"passed": true or false, "issues": ["specific issue 1", "specific issue 2"]}}
 
-If there are truly no issues, return {{"passed": true, "issues": []}}.
+If there are truly no issues, output {{"passed": true, "issues": []}}.
 
 Rules for the issues array, follow these exactly:
-- Each issue must be a single short statement under 25 words. State the problem plainly.
-- Do NOT reason, deliberate, or correct yourself inside a string. Decide first, then write only your conclusion. Never write phrases like "wait", "checking", "however, on reflection".
-- If you consider something and decide it is NOT a problem, simply leave it out. Do not mention it.
+- Only include things you concluded ARE genuine problems. If you considered something and decided it was acceptable, leave it out entirely.
+- Each issue is one short statement under 25 words, stating only your conclusion.
+- Never deliberate, hedge, or self-correct inside a string. All of that belongs in your plain text thinking above, not in the JSON.
 - Name the specific text at fault in a few words so it can be found."""
 
     response = requests.post(
@@ -69,7 +71,7 @@ Rules for the issues array, follow these exactly:
         },
         json={
             "model": "claude-sonnet-4-6",
-            "max_tokens": 1500,
+            "max_tokens": 2000,
             "messages": [{"role": "user", "content": prompt}],
         },
     )
@@ -77,11 +79,11 @@ Rules for the issues array, follow these exactly:
     data = response.json()
     raw_text = "".join(block["text"] for block in data["content"] if block["type"] == "text")
 
-    # Defensive parsing. Strip code fences, then isolate the JSON object rather
-    # than assuming the whole response is clean JSON.
+    # The model reasons in plain text first, then emits the JSON object last,
+    # so match the LAST balanced-looking object rather than the first.
     cleaned = re.sub(r"```(?:json)?", "", raw_text).strip()
-    match = re.search(r"\{.*\}", cleaned, re.DOTALL)
-    candidate = match.group(0) if match else cleaned
+    matches = re.findall(r'\{[^{}]*"passed"[^{}]*\[[^\]]*\][^{}]*\}', cleaned, re.DOTALL)
+    candidate = matches[-1] if matches else cleaned
 
     try:
         result = json.loads(candidate)
@@ -89,16 +91,24 @@ Rules for the issues array, follow these exactly:
     except (json.JSONDecodeError, AttributeError):
         pass
 
-    # Truncation repair: if the response was cut off mid-array, salvage the
-    # complete strings we did receive rather than discarding a real review.
-    strings = re.findall(r'"((?:[^"\\]|\\.)*)"', cleaned)
-    salvaged = [s for s in strings if len(s) > 30 and s not in ("passed", "issues")]
+    # Fallback: any object at all
+    m = re.search(r"\{.*\}", cleaned, re.DOTALL)
+    if m:
+        try:
+            result = json.loads(m.group(0))
+            return {"passed": bool(result.get("passed", False)), "issues": result.get("issues", [])}
+        except (json.JSONDecodeError, AttributeError):
+            pass
+
+    # Truncation repair: salvage complete strings from the issues array only,
+    # so plain-text reasoning above is not mistaken for findings.
+    tail = cleaned.split('"issues"')[-1] if '"issues"' in cleaned else ""
+    strings = re.findall(r'"((?:[^"\\]|\\.)*)"', tail)
+    salvaged = [s for s in strings if len(s) > 30]
     if salvaged:
         return {
             "passed": False,
             "issues": [f"(recovered from an incomplete QC response) {s}" for s in salvaged[:5]],
         }
 
-    # Nothing usable. Fail safe: treat as a failed check rather than silently
-    # letting content through unreviewed.
-    return {"passed": False, "issues": [f"QC response could not be parsed - manual review required. Raw response: {raw_text[:200]}"]}
+    return {"passed": False, "issues": [f"QC response could not be parsed - manual review required. Raw response: {raw_text[-200:]}"]}
