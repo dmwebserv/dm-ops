@@ -76,8 +76,25 @@
     }
   ],
   "competitors": {
-    "configured": false,
-    "records": []
+    "configured": true,
+    "records": [
+      {
+        "name": "Test Rival",
+        "url": "https://example.com",
+        "status": "changed",
+        "compared_to": "2026-07-01",
+        "lines_captured": 1,
+        "added_count": 1,
+        "removed_count": 1,
+        "added": [
+          "This domain is for use in documentation examples without needing permission. Avoid use in operations."
+        ],
+        "removed": [
+          "This is placeholder text used for testing the competitor diff detection pipeline before real content was captured."
+        ],
+        "truncated": false
+      }
+    ]
   },
   "runs": {
     "claude.yml": {
@@ -87,13 +104,13 @@
     },
     "competitor-intel.yml": {
       "state": "success",
-      "when": "2026-08-01T23:17:32Z",
-      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30723029142"
+      "when": "2026-08-01T23:54:04Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30724197300"
     },
     "dashboard.yml": {
       "state": "in_progress",
-      "when": "2026-08-01T23:21:03Z",
-      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30723154128"
+      "when": "2026-08-01T23:54:25Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30724221354"
     },
     "growth-report.yml": {
       "state": "success",
@@ -117,8 +134,8 @@
     },
     "social-drafts.yml": {
       "state": "success",
-      "when": "2026-08-01T10:27:35Z",
-      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30695678121"
+      "when": "2026-08-01T23:29:49Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30723409214"
     }
   },
   "flags": {
@@ -137,12 +154,17 @@
     },
     {
       "weight": 3,
-      "label": "10 items waiting for you to read",
+      "label": "11 items waiting for you to read",
       "detail": "Reports held back rather than sent automatically",
       "view": "queue"
     }
   ],
   "queue": [
+    {
+      "file": "business-competitors-2026-08.md",
+      "kind": "Competitor brief",
+      "reason": "internal competitor briefing, for your eyes only and never sent to anyone."
+    },
     {
       "file": "kcm-2026-07.md",
       "kind": "Client report",
