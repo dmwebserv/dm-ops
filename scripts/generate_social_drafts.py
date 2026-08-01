@@ -4,6 +4,7 @@ import re
 import os
 import json
 from datetime import datetime, timezone
+from qc_review import qc_review
 
 ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
 
@@ -86,6 +87,16 @@ def main():
             f"do not post without reviewing and adding actual images.*\n"
         )
 
+        qc_result = qc_review(
+            draft_text=full_doc,
+            source_facts={"site_content_excerpt": site_text[:1000]},
+            contact_name=client["name"],
+            sender_name="Danny",
+        )
+        qc_note = ""
+        if not qc_result["passed"]:
+            qc_note = "QC flagged:\n" + "\n".join(f"- {i}" for i in qc_result["issues"]) + "\n\n"
+
         client_dir = f"reports/{client['id']}"
         os.makedirs(client_dir, exist_ok=True)
         out_path = f"{client_dir}/social-{month_str}.md"
@@ -97,6 +108,7 @@ def main():
         flag_path = f"reports/_review_queue/{client['id']}-social-{month_str}.md"
         with open(flag_path, "w") as f:
             f.write("HOLD FOR REVIEW - reason: social drafts always need a human pass (photo pairing, tone check) before posting.\n\n")
+            f.write(qc_note)
             f.write(full_doc)
 
         print(f"Social drafts ready for review: {out_path}")
