@@ -172,15 +172,12 @@ def compute_seo(clients):
     return rows
 
 
-def compute_competitors(clients):
-    """Flatten competitor_check.py's latest.json (nested clients[].competitors[])
-    into one row per competitor, since that's what the dashboard renders."""
+def compute_competitors(business):
+    """competitor_check.py's latest.json is already a flat list - competitors
+    belong to the business, not to any individual client."""
     latest = load_json_safe("logs/competitors/latest.json")
-    configured = any(c.get("competitors") for c in clients)
-    records = []
-    for client_entry in (latest or {}).get("clients", []):
-        for comp in client_entry.get("competitors", []):
-            records.append({**comp, "client_name": client_entry.get("name", "")})
+    configured = bool(business.get("competitors"))
+    records = (latest or {}).get("competitors", [])
     return {"configured": configured, "records": records}
 
 
@@ -592,9 +589,9 @@ def render(data):
     # --- competitor view ---
     if not comp["configured"]:
         c_html = ('<div class="empty"><h3>Competitor tracking is off</h3>'
-                  '<p>Add rival sites to any client in clients.yaml and this fills in after two runs - the first '
-                  'records a baseline, the second reports what changed.</p>'
-                  '<pre>competitors:\n  - name: "Local Rival Ltd"\n    url: "https://theirsite.co.uk"</pre></div>')
+                  '<p>Add rival studios under business.competitors in clients.yaml and this fills in after two '
+                  'runs - the first records a baseline, the second reports what changed.</p>'
+                  '<pre>business:\n  competitors:\n    - name: "Local Studio Ltd"\n      url: "https://theirsite.co.uk"</pre></div>')
     else:
         rows = ""
         for r in comp["records"]:
@@ -611,11 +608,12 @@ def render(data):
                     note += " (list truncated)"
             else:
                 note = status or "unknown"
+            compared_to = r.get("compared_to") or "first run"
             rows += (f'<div class="card" style="margin-bottom:12px"><h3>{esc(r.get("name", "(unnamed)"))}</h3>'
                      f'<a class="link" href="{esc(r.get("url", ""))}" target="_blank" rel="noopener">'
                      f'{esc(r.get("url", ""))}</a><div class="metrics"><div class="metric">'
                      f'<div class="v" style="font-size:14px">{esc(note)}</div>'
-                     f'<div class="k">Watching for {esc(r.get("client_name", ""))}</div></div></div></div>')
+                     f'<div class="k">Compared to {esc(compared_to)}</div></div></div></div>')
         c_html = rows or '<div class="empty"><h3>No competitor data yet</h3><p>Run the Competitor Intel workflow.</p></div>'
 
     # --- systems view ---
@@ -733,7 +731,7 @@ def main():
     health = compute_health(clients)
     seo = compute_seo(clients)
     queue = read_review_queue()
-    competitors = compute_competitors(clients)
+    competitors = compute_competitors(business)
 
     data = {
         "revenue": compute_revenue(clients, business),
