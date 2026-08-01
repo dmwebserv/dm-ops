@@ -26,4 +26,13 @@ jobs:
           git config user.email "actions@github.com"
           git add reports/
           git diff --staged --quiet || git commit -m "Generate social content drafts"
-          git push
+          for attempt in 1 2 3; do
+            git push && break
+            echo "Push rejected (attempt $attempt/3) - fetching and rebasing onto origin/main"
+            git fetch origin main
+            git rebase origin/main
+            if [ "$attempt" = "3" ]; then
+              echo "::error::git push failed after 3 attempts"
+              exit 1
+            fi
+          done

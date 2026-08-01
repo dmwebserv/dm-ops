@@ -6,8 +6,6 @@ import re
 import requests
 from datetime import datetime, timezone, timedelta
 
-CARE_PLAN_MONTHLY_VALUE = 30
-
 # Every system in the estate. Keyed by workflow filename so we can match against
 # the GitHub Actions API and report real last-run state rather than assuming.
 SYSTEMS = [
@@ -92,9 +90,10 @@ def humanise_age(iso_string):
     return f"{days // 30}mo ago"
 
 
-def compute_revenue(clients):
+def compute_revenue(clients, business):
+    care_plan_monthly_value = business.get("care_plan_monthly_value", 30)
     care = [c for c in clients if c.get("care_plan")]
-    return {"care_plan_clients": len(care), "total_clients": len(clients), "mrr": len(care) * CARE_PLAN_MONTHLY_VALUE}
+    return {"care_plan_clients": len(care), "total_clients": len(clients), "mrr": len(care) * care_plan_monthly_value}
 
 
 def compute_health(clients):
@@ -174,9 +173,15 @@ def compute_seo(clients):
 
 
 def compute_competitors(clients):
+    """Flatten competitor_check.py's latest.json (nested clients[].competitors[])
+    into one row per competitor, since that's what the dashboard renders."""
     latest = load_json_safe("logs/competitors/latest.json")
     configured = any(c.get("competitors") for c in clients)
-    return {"configured": configured, "records": latest or []}
+    records = []
+    for client_entry in (latest or {}).get("clients", []):
+        for comp in client_entry.get("competitors", []):
+            records.append({**comp, "client_name": client_entry.get("name", "")})
+    return {"configured": configured, "records": records}
 
 
 def read_review_queue():
@@ -593,17 +598,24 @@ def render(data):
     else:
         rows = ""
         for r in comp["records"]:
-            if r["status"] == "unreachable":
-                note = "could not be reached"
-            elif r["is_first_run"]:
+            status = r.get("status")
+            if status == "error":
+                note = f'could not be checked ({r.get("error", "unknown error")})'
+            elif status == "baseline":
                 note = "baseline recorded, changes show from next run"
+            elif status == "unchanged":
+                note = "no changes since last check"
+            elif status == "changed":
+                note = f'{r.get("added_count", 0)} added, {r.get("removed_count", 0)} removed'
+                if r.get("truncated"):
+                    note += " (list truncated)"
             else:
-                note = f'{len(r["added"])} added, {len(r["removed"])} removed'
-            rows += (f'<div class="card" style="margin-bottom:12px"><h3>{esc(r["competitor_name"])}</h3>'
-                     f'<a class="link" href="{esc(r["competitor_url"])}" target="_blank" rel="noopener">'
-                     f'{esc(r["competitor_url"])}</a><div class="metrics"><div class="metric">'
+                note = status or "unknown"
+            rows += (f'<div class="card" style="margin-bottom:12px"><h3>{esc(r.get("name", "(unnamed)"))}</h3>'
+                     f'<a class="link" href="{esc(r.get("url", ""))}" target="_blank" rel="noopener">'
+                     f'{esc(r.get("url", ""))}</a><div class="metrics"><div class="metric">'
                      f'<div class="v" style="font-size:14px">{esc(note)}</div>'
-                     f'<div class="k">Watching for {esc(r["client_name"])}</div></div></div></div>')
+                     f'<div class="k">Watching for {esc(r.get("client_name", ""))}</div></div></div></div>')
         c_html = rows or '<div class="empty"><h3>No competitor data yet</h3><p>Run the Competitor Intel workflow.</p></div>'
 
     # --- systems view ---
@@ -724,7 +736,7 @@ def main():
     competitors = compute_competitors(clients)
 
     data = {
-        "revenue": compute_revenue(clients),
+        "revenue": compute_revenue(clients, business),
         "health": health,
         "history": compute_history(),
         "seo": seo,
