@@ -4,52 +4,184 @@
     "total_clients": 2,
     "mrr": 60
   },
-  "health": {
-    "per_client": [
-      {
-        "name": "LWP Painting & Decorating",
-        "status": "ok",
-        "uptime_ok": true,
-        "ssl_days_left": 46,
-        "issue_count": 0
-      },
-      {
-        "name": "KCM Cleaning",
-        "status": "needs_review",
-        "uptime_ok": true,
-        "ssl_days_left": 51,
-        "issue_count": 1
-      }
-    ],
-    "healthy_count": 1,
-    "total_checked": 2
-  },
+  "health": [
+    {
+      "id": "lwp",
+      "name": "LWP Painting & Decorating",
+      "url": "https://lwppaintingdecorating.co.uk",
+      "status": "ok",
+      "ssl_days_left": 45,
+      "response_ms": 264,
+      "errors": [],
+      "checked_at": "2026-08-01T09:52:25.569517+00:00"
+    },
+    {
+      "id": "kcm",
+      "name": "KCM Cleaning",
+      "url": "https://kcmcleaning.co.uk",
+      "status": "needs_review",
+      "ssl_days_left": 50,
+      "response_ms": 288,
+      "errors": [
+        "2 broken link(s) found"
+      ],
+      "checked_at": "2026-08-01T09:52:26.331461+00:00"
+    }
+  ],
   "history": {
-    "days_of_history": 1,
-    "total_checks_run": 2,
-    "rolling_uptime_pct": 100.0
-  },
-  "seo": {
-    "per_client": [
+    "days": 2,
+    "checks": 4,
+    "uptime_pct": 100.0,
+    "daily": [
       {
-        "name": "LWP Painting & Decorating",
-        "high": 0,
-        "medium": 1,
-        "low": 0,
-        "total": 1
+        "date": "2026-07-31",
+        "pct": 100.0
       },
       {
-        "name": "KCM Cleaning",
-        "high": 0,
-        "medium": 1,
-        "low": 0,
-        "total": 1
+        "date": "2026-08-01",
+        "pct": 100.0
       }
-    ],
-    "total_high": 0,
-    "total_medium": 2,
-    "total_low": 0
+    ]
   },
-  "review_queue_count": 2,
-  "open_issues": 3
+  "seo": [
+    {
+      "id": "lwp",
+      "name": "LWP Painting & Decorating",
+      "high": [],
+      "medium": [
+        {
+          "severity": "medium",
+          "area": "meta_description",
+          "detail": "Meta description is 206 characters (ideal range: 50-160)."
+        }
+      ],
+      "low": [],
+      "total": 1,
+      "checked_at": "2026-07-31T14:26:07.526306+00:00"
+    },
+    {
+      "id": "kcm",
+      "name": "KCM Cleaning",
+      "high": [],
+      "medium": [
+        {
+          "severity": "medium",
+          "area": "meta_description",
+          "detail": "Meta description is 212 characters (ideal range: 50-160)."
+        }
+      ],
+      "low": [],
+      "total": 1,
+      "checked_at": "2026-07-31T14:26:07.903858+00:00"
+    }
+  ],
+  "competitors": {
+    "configured": false,
+    "records": []
+  },
+  "runs": {
+    "dashboard.yml": {
+      "state": "in_progress",
+      "when": "2026-08-01T22:10:32Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30720691191"
+    },
+    "growth-report.yml": {
+      "state": "success",
+      "when": "2026-08-01T10:38:51Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30696099193"
+    },
+    "monthly-report.yml": {
+      "state": "success",
+      "when": "2026-08-01T10:40:11Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30696134055"
+    },
+    "seo-checks.yml": {
+      "state": "success",
+      "when": "2026-07-31T14:26:12Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30638563272"
+    },
+    "site-checks.yml": {
+      "state": "success",
+      "when": "2026-08-01T09:52:31Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30694588282"
+    },
+    "social-drafts.yml": {
+      "state": "success",
+      "when": "2026-08-01T10:27:35Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30695678121"
+    }
+  },
+  "flags": {
+    "test_mode": true,
+    "force_send": true,
+    "from_email": "updates@updates.dmwebservices.co.uk",
+    "test_email": "danny@dmwebservices.co.uk"
+  },
+  "api_ok": true,
+  "attention": [
+    {
+      "weight": 0,
+      "label": "Test mode is on - no reports are reaching real clients",
+      "detail": "Set test_mode and force_send_for_testing to false in clients.yaml",
+      "view": "systems"
+    },
+    {
+      "weight": 3,
+      "label": "10 items waiting for you to read",
+      "detail": "Reports held back rather than sent automatically",
+      "view": "queue"
+    }
+  ],
+  "queue": [
+    {
+      "file": "kcm-2026-07.md",
+      "kind": "Client report",
+      "reason": "Held for review"
+    },
+    {
+      "file": "kcm-growth-2026-07.md",
+      "kind": "Growth report",
+      "reason": "Growth Agent reports are always human-reviewed for now."
+    },
+    {
+      "file": "kcm-growth-2026-08.md",
+      "kind": "Growth report",
+      "reason": "Growth Agent reports are always human-reviewed for now."
+    },
+    {
+      "file": "kcm-social-2026-07.md",
+      "kind": "Social drafts",
+      "reason": "social drafts always need a human pass (photo pairing, tone check) before posting."
+    },
+    {
+      "file": "kcm-social-2026-08.md",
+      "kind": "Social drafts",
+      "reason": "social drafts always need a human pass (photo pairing, tone check) before posting."
+    },
+    {
+      "file": "lwp-2026-07.md",
+      "kind": "Client report",
+      "reason": "Held for review"
+    },
+    {
+      "file": "lwp-growth-2026-07.md",
+      "kind": "Growth report",
+      "reason": "Growth Agent reports are always human-reviewed for now."
+    },
+    {
+      "file": "lwp-growth-2026-08.md",
+      "kind": "Growth report",
+      "reason": "Growth Agent reports are always human-reviewed for now."
+    },
+    {
+      "file": "lwp-social-2026-07.md",
+      "kind": "Social drafts",
+      "reason": "social drafts always need a human pass (photo pairing, tone check) before posting."
+    },
+    {
+      "file": "lwp-social-2026-08.md",
+      "kind": "Social drafts",
+      "reason": "social drafts always need a human pass (photo pairing, tone check) before posting."
+    }
+  ]
 }
