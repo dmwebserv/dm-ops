@@ -3,6 +3,7 @@ import os
 import yaml
 import requests
 from datetime import datetime, timezone
+from qc_review import qc_review
 
 ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
 
@@ -76,8 +77,19 @@ def main():
             f"*Based on {len(findings_record['findings'])} technical signal(s) detected on {findings_record['checked_at'][:10]}.*\n"
         )
 
-        # Always held for review for now - this is a new, unproven system and doubles
-        # as a sales/upsell artifact, so it earns a human check until trusted.
+        # These already always hold for review regardless, but running QC still
+        # adds value: the review-queue note tells you exactly what to check
+        # instead of you having to spot it yourself.
+        qc_result = qc_review(
+            draft_text=full_doc,
+            source_facts={"findings": findings_record["findings"]},
+            contact_name=client["name"],
+            sender_name="Danny",
+        )
+        qc_note = ""
+        if not qc_result["passed"]:
+            qc_note = "QC flagged:\n" + "\n".join(f"- {i}" for i in qc_result["issues"]) + "\n\n"
+
         client_dir = f"reports/{client['id']}"
         os.makedirs(client_dir, exist_ok=True)
         out_path = f"{client_dir}/growth-{month_str}.md"
@@ -87,6 +99,7 @@ def main():
         flag_path = f"reports/_review_queue/{client['id']}-growth-{month_str}.md"
         with open(flag_path, "w") as f:
             f.write("HOLD FOR REVIEW - reason: Growth Agent reports are always human-reviewed for now.\n\n")
+            f.write(qc_note)
             f.write(full_doc)
 
         print(f"Growth report ready for review: {out_path}")
