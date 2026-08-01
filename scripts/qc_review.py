@@ -52,7 +52,13 @@ Draft to review:
 Respond with ONLY valid JSON, no other text, no markdown code fences, in this exact shape:
 {{"passed": true or false, "issues": ["specific issue 1", "specific issue 2"]}}
 
-If there are truly no issues, return {{"passed": true, "issues": []}}. Be precise - quote or closely paraphrase the specific problematic text in each issue so it can be found and fixed."""
+If there are truly no issues, return {{"passed": true, "issues": []}}.
+
+Rules for the issues array, follow these exactly:
+- Each issue must be a single short statement under 25 words. State the problem plainly.
+- Do NOT reason, deliberate, or correct yourself inside a string. Decide first, then write only your conclusion. Never write phrases like "wait", "checking", "however, on reflection".
+- If you consider something and decide it is NOT a problem, simply leave it out. Do not mention it.
+- Name the specific text at fault in a few words so it can be found."""
 
     response = requests.post(
         "https://api.anthropic.com/v1/messages",
@@ -63,7 +69,7 @@ If there are truly no issues, return {{"passed": true, "issues": []}}. Be precis
         },
         json={
             "model": "claude-sonnet-4-6",
-            "max_tokens": 500,
+            "max_tokens": 1500,
             "messages": [{"role": "user", "content": prompt}],
         },
     )
@@ -71,12 +77,28 @@ If there are truly no issues, return {{"passed": true, "issues": []}}. Be precis
     data = response.json()
     raw_text = "".join(block["text"] for block in data["content"] if block["type"] == "text")
 
-    # Defensive parsing - strip any accidental code fences, find the JSON object
+    # Defensive parsing. Strip code fences, then isolate the JSON object rather
+    # than assuming the whole response is clean JSON.
     cleaned = re.sub(r"```(?:json)?", "", raw_text).strip()
+    match = re.search(r"\{.*\}", cleaned, re.DOTALL)
+    candidate = match.group(0) if match else cleaned
+
     try:
-        result = json.loads(cleaned)
+        result = json.loads(candidate)
         return {"passed": bool(result.get("passed", False)), "issues": result.get("issues", [])}
     except (json.JSONDecodeError, AttributeError):
-        # If QC's own output can't be parsed, fail safe: treat as a failed check
-        # rather than silently letting content through unreviewed.
-        return {"passed": False, "issues": [f"QC response could not be parsed - manual review required. Raw response: {raw_text[:200]}"]}
+        pass
+
+    # Truncation repair: if the response was cut off mid-array, salvage the
+    # complete strings we did receive rather than discarding a real review.
+    strings = re.findall(r'"((?:[^"\\]|\\.)*)"', cleaned)
+    salvaged = [s for s in strings if len(s) > 30 and s not in ("passed", "issues")]
+    if salvaged:
+        return {
+            "passed": False,
+            "issues": [f"(recovered from an incomplete QC response) {s}" for s in salvaged[:5]],
+        }
+
+    # Nothing usable. Fail safe: treat as a failed check rather than silently
+    # letting content through unreviewed.
+    return {"passed": False, "issues": [f"QC response could not be parsed - manual review required. Raw response: {raw_text[:200]}"]}
