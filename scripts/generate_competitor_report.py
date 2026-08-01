@@ -165,6 +165,7 @@ def main():
             },
             contact_name=sender_name,
             sender_name=sender_name,
+            content_type="internal_briefing",
         )
         qc_note = ""
         if not qc_result["passed"]:

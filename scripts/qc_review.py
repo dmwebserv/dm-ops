@@ -22,24 +22,38 @@ import requests
 ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
 
 
-def qc_review(draft_text, source_facts, contact_name, sender_name):
+def qc_review(draft_text, source_facts, contact_name, sender_name, content_type="client_email"):
     """
     draft_text: the generated content to check
     source_facts: dict of the real data the draft should be grounded in (so QC can
                   check for invented figures, not just style issues)
+    content_type: "client_email" (default) - a one-way message sent to a named
+                  contact, so the greeting/sign-off check applies.
+                  "internal_briefing" or "social_caption" - content that never
+                  has a greeting or sign-off by design (internal-only notes,
+                  social captions), so that check is dropped entirely from the
+                  prompt rather than softened - the model should never see a
+                  rule it's meant to ignore.
     Returns: {"passed": bool, "issues": [str, ...]}
     """
-    prompt = f"""You are a strict quality-control reviewer checking a piece of client-facing content before it is sent automatically, with no human reading it first. You did not write this content - your only job is to find problems with it. Be skeptical, not generous.
+    rules = [
+        "Actual em dash (—) or en dash (–) characters anywhere. Standard hyphens (-), including when used with spaces around them as a sentence break (e.g. \"the site was fine - no issues\"), are completely acceptable and must NOT be flagged - only flag the literal — or – characters.",
+        "Placeholder or template text left in (e.g. \"[Your name]\", \"Hi there\" instead of a real name, \"[Client Name]\", or similar).",
+        "Any figure, statistic, date, or claim in the draft that does NOT appear in the source facts provided below (i.e. invented or hallucinated data).",
+        "The draft asking the reader a question or inviting them to choose between options (this should be a one-way statement, not a conversation starter).",
+    ]
+    if content_type == "client_email":
+        rules.append(f'The greeting not using "{contact_name}" or the sign-off not using "{sender_name}" correctly.')
+    rules.append("Any tone that is overly salesy, uses corporate buzzwords, or doesn't match a plain, factual, warm-but-not-fluffy style.")
+    rules.append("Any factual contradiction within the draft itself (e.g. saying uptime was perfect and also saying the site was down).")
+
+    checks_text = "\n".join(f"{i}. {rule}" for i, rule in enumerate(rules, start=1))
+
+    prompt = f"""You are a strict quality-control reviewer checking a piece of content before it is sent or published automatically, with no human reading it first. You did not write this content - your only job is to find problems with it. Be skeptical, not generous.
 
 Check specifically for ALL of the following, and list every one that applies:
 
-1. Actual em dash (—) or en dash (–) characters anywhere. Standard hyphens (-), including when used with spaces around them as a sentence break (e.g. "the site was fine - no issues"), are completely acceptable and must NOT be flagged - only flag the literal — or – characters.
-2. Placeholder or template text left in (e.g. "[Your name]", "Hi there" instead of a real name, "[Client Name]", or similar).
-3. Any figure, statistic, date, or claim in the draft that does NOT appear in the source facts provided below (i.e. invented or hallucinated data).
-4. The draft asking the reader a question or inviting them to choose between options (this should be a one-way statement, not a conversation starter).
-5. The greeting not using "{contact_name}" or the sign-off not using "{sender_name}" correctly.
-6. Any tone that is overly salesy, uses corporate buzzwords, or doesn't match a plain, factual, warm-but-not-fluffy style.
-7. Any factual contradiction within the draft itself (e.g. saying uptime was perfect and also saying the site was down).
+{checks_text}
 
 Source facts (the ONLY data the draft is allowed to state as fact):
 {json.dumps(source_facts, indent=2)}
@@ -49,7 +63,7 @@ Draft to review:
 {draft_text}
 ---
 
-First, think through each of the seven checks in plain text. Work out what is and is not a genuine problem here. Take as long as you need.
+First, think through each of the {len(rules)} checks in plain text. Work out what is and is not a genuine problem here. Take as long as you need.
 
 Then, on a new line, output your conclusion as a single JSON object and nothing after it:
 {{"passed": true or false, "issues": ["specific issue 1", "specific issue 2"]}}

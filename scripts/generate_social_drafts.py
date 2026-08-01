@@ -92,6 +92,7 @@ def main():
             source_facts={"site_content_excerpt": site_text[:1000]},
             contact_name=client["name"],
             sender_name="Danny",
+            content_type="social_caption",
         )
         qc_note = ""
         if not qc_result["passed"]:
