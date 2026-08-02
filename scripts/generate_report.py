@@ -5,6 +5,7 @@ import yaml
 import requests
 from datetime import datetime, timezone, timedelta
 from qc_review import qc_review
+from anthropic_client import call_claude
 
 ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
 DAYS_BACK = 30
@@ -74,7 +75,7 @@ def needs_human_review(summary):
         reasons.append(f"{len(summary['issues'])} issues flagged this period (higher than usual)")
     return reasons
 
-def draft_report(client_name, contact_name, sender_name, summary, period_label):
+def draft_report(client_name, contact_name, sender_name, summary, period_label, model):
     if summary["issues"]:
         issues_text = "\n".join(f"- {i['date']}: {i['issue']}" for i in summary["issues"])
     else:
@@ -108,22 +109,7 @@ Critical accuracy rules, these override tone:
 - Never state a calendar date that is not given above. If told a number of days, say the number of days, do not convert it into a month or date.
 - Do not invent any figure not given above."""
 
-    response = requests.post(
-        "https://api.anthropic.com/v1/messages",
-        headers={
-            "x-api-key": ANTHROPIC_API_KEY,
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-        },
-        json={
-            "model": "claude-sonnet-4-6",
-            "max_tokens": 600,
-            "messages": [{"role": "user", "content": prompt}],
-        },
-    )
-    response.raise_for_status()
-    data = response.json()
-    return "".join(block["text"] for block in data["content"] if block["type"] == "text")
+    return call_claude(ANTHROPIC_API_KEY, model, prompt, 600)
 
 def render_email_html(body_markdown, client_name, period_label, summary):
     import markdown as md
@@ -220,6 +206,7 @@ def main():
     test_mode = business.get("test_mode", False)
     test_email = business.get("test_email", "")
     force_send_for_testing = business.get("force_send_for_testing", False)
+    model = business.get("anthropic_model", "claude-sonnet-4-6")
 
     period_label = datetime.now(timezone.utc).strftime("%B %Y")
     month_str = datetime.now(timezone.utc).strftime("%Y-%m")
@@ -241,7 +228,7 @@ def main():
             print(f"No data yet for {client['name']} - skipping.")
             continue
 
-        report_text = draft_report(client["name"], contact_name, sender_name, summary, period_label)
+        report_text = draft_report(client["name"], contact_name, sender_name, summary, period_label, model)
         hold_reasons = [] if force_send_for_testing else needs_human_review(summary)
 
         full_doc = (
@@ -269,6 +256,7 @@ def main():
                 },
                 contact_name=contact_name,
                 sender_name=sender_name,
+                model=model,
             )
             if not qc_result["passed"]:
                 print(f"QC flagged issues for {client['name']}: {qc_result['issues']}")

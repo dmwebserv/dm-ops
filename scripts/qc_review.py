@@ -17,12 +17,12 @@ fails, treat it exactly like any other hold-for-review reason - do not send.
 import os
 import json
 import re
-import requests
+from anthropic_client import call_claude
 
 ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
 
 
-def qc_review(draft_text, source_facts, contact_name, sender_name, content_type="client_email"):
+def qc_review(draft_text, source_facts, contact_name, sender_name, content_type="client_email", model="claude-sonnet-4-6"):
     """
     draft_text: the generated content to check
     source_facts: dict of the real data the draft should be grounded in (so QC can
@@ -34,6 +34,9 @@ def qc_review(draft_text, source_facts, contact_name, sender_name, content_type=
                   social captions), so that check is dropped entirely from the
                   prompt rather than softened - the model should never see a
                   rule it's meant to ignore.
+    model: the Anthropic model ID to use. Callers should pass
+           business.anthropic_model from clients.yaml - this default is only a
+           fallback for callers that don't.
     Returns: {"passed": bool, "issues": [str, ...]}
     """
     rules = [
@@ -76,22 +79,7 @@ Rules for the issues array, follow these exactly:
 - Never deliberate, hedge, or self-correct inside a string. All of that belongs in your plain text thinking above, not in the JSON.
 - Name the specific text at fault in a few words so it can be found."""
 
-    response = requests.post(
-        "https://api.anthropic.com/v1/messages",
-        headers={
-            "x-api-key": ANTHROPIC_API_KEY,
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-        },
-        json={
-            "model": "claude-sonnet-4-6",
-            "max_tokens": 2000,
-            "messages": [{"role": "user", "content": prompt}],
-        },
-    )
-    response.raise_for_status()
-    data = response.json()
-    raw_text = "".join(block["text"] for block in data["content"] if block["type"] == "text")
+    raw_text = call_claude(ANTHROPIC_API_KEY, model, prompt, 2000)
 
     # The model reasons in plain text first, then emits the JSON object last,
     # so match the LAST balanced-looking object rather than the first.

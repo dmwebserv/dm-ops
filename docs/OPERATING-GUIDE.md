@@ -70,11 +70,17 @@ is cheap to keep and expensive to lose):
 
 | Secret / service | Used by | What breaks if it fails |
 |---|---|---|
-| `ANTHROPIC_API_KEY` (GitHub secret) | `generate_report.py`, `generate_growth_report.py`, `generate_social_drafts.py`, `generate_competitor_report.py`, `qc_review.py` (used by all four) | Any of these scripts fails immediately and loudly (uncaught API error) - no partial or garbled report is ever written, because the "commit" step in each workflow only runs if the drafting step succeeded. Worst case: that month's report/briefing simply doesn't get generated until the key is fixed and the workflow re-run (manually, via workflow_dispatch - it won't retry itself). |
+| `ANTHROPIC_API_KEY` (GitHub secret) | `generate_report.py`, `generate_growth_report.py`, `generate_social_drafts.py`, `generate_competitor_report.py`, `qc_review.py` (used by all four) | Any of these scripts fails immediately and loudly (uncaught API error) - no partial or garbled report is ever written, because the "commit" step in each workflow only runs if the drafting step succeeded. Worst case: that month's report/briefing simply doesn't get generated until the key is fixed and the workflow re-run (manually, via workflow_dispatch - it won't retry itself). The model ID itself (`business.anthropic_model` in `clients.yaml`) is a separate failure mode from the key - see Troubleshooting below. |
 | `RESEND_API_KEY` (GitHub secret) | `generate_report.py` only, for the actual send | If this is bad, the email send raises and crashes `generate_report.py` - but this can happen *after* some clients in the loop were already drafted successfully in that run. Because the failure aborts the whole script, the commit step is skipped entirely, so **no client's report is committed that run**, not just the one that failed to send. Re-run once the key is fixed. |
 | Resend sending domain / IONOS DNS (SPF, DKIM, DMARC on `updates.dmwebservices.co.uk`) | Email deliverability | This is the one silent failure mode: if DNS records lapse or get misconfigured, Resend's API call can still succeed (200 OK) while the email itself gets spam-filtered or bounced at the recipient's end. Nothing in this system currently detects that - check Resend's own dashboard/logs periodically, don't rely on the workflow going green. |
 | `GITHUB_TOKEN` (auto-provided by Actions, no setup needed) | Every workflow's commit/push step; `notify.py` (creates issues); `generate_dashboard.py` (reads Actions API for run status) | If repo Settings -> Actions -> General -> Workflow permissions isn't "Read and write", every commit step fails with exit code 128 (this is the #1 historical failure mode - see `KNOWLEDGE.md`). If `notify.py`'s issue-creation call fails, `site-checks.yml`'s commit step is also skipped that day (same all-or-nothing step behavior as above), so that day's check results don't get committed either. |
 | GitHub Actions itself | All scheduling and compute | If Actions is down or disabled for the repo, nothing runs, nothing notifies you that nothing ran - there's no external heartbeat check. The dashboard will show stale "last ran" times next time it *does* rebuild. |
+
+## Troubleshooting
+
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| `growth-report.yml`, `monthly-report.yml`, `social-drafts.yml`, and/or `competitor-intel.yml` all fail at the drafting step, with an error that names a model | `business.anthropic_model` in `clients.yaml` has been retired, renamed, or was never a valid model ID - this looks exactly like a bad `ANTHROPIC_API_KEY` but isn't | The error is deliberately explicit about this (see `scripts/anthropic_client.py`) - it names the model and points here rather than leaving you to deduce it. Check Anthropic's current model list and update `business.anthropic_model` to a valid ID. No code change needed - every script reads it from config |
 
 ## How to add a client
 
@@ -159,6 +165,13 @@ run it yourself when you've actually read what's in there.
   diff - a page that gets reordered without any real content change won't be reported as
   changed (this is deliberate), but genuinely new content that happens to match old wording
   won't register either.
+- **Some competitor sites will block automated checks entirely.** This is expected, not a
+  bug - a site behind bot protection (e.g. Cloudflare) can reject requests from cloud/
+  datacenter IP ranges like GitHub Actions runners even though the same page loads fine in
+  a browser. The dashboard shows this as "could not be checked" for that competitor rather
+  than failing the whole run. The correct response is to check that one manually yourself if
+  it matters - not to disguise the request (a different User-Agent, etc.) to get past a block
+  the site owner deliberately put up.
 - **Workflow files (`.github/workflows/*.yml`) cannot be created or edited by the `@claude`
   bot** - GitHub blocks a GitHub App token from touching that path without an explicit
   `workflows` permission grant, as a deliberate security boundary. Changes to workflow files

@@ -5,6 +5,7 @@ business:
   test_email: danny@dmwebservices.co.uk
   force_send_for_testing: true
   care_plan_monthly_value: 30
+  anthropic_model: "claude-sonnet-4-6"
   competitors:
     - name: "RIOT Studio"
       url: "https://riotcolchester.com/pricing"

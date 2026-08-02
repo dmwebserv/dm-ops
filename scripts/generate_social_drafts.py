@@ -5,6 +5,7 @@ import os
 import json
 from datetime import datetime, timezone
 from qc_review import qc_review
+from anthropic_client import call_claude
 
 ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
 
@@ -22,7 +23,7 @@ def fetch_site_text(url):
     except requests.exceptions.RequestException:
         return None
 
-def draft_social_posts(client_name, site_text):
+def draft_social_posts(client_name, site_text, model):
     if not site_text:
         return None
 
@@ -41,26 +42,15 @@ Suggested image: [description]
 
 (repeat for posts 2 and 3)"""
 
-    response = requests.post(
-        "https://api.anthropic.com/v1/messages",
-        headers={
-            "x-api-key": ANTHROPIC_API_KEY,
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-        },
-        json={
-            "model": "claude-sonnet-4-6",
-            "max_tokens": 900,
-            "messages": [{"role": "user", "content": prompt}],
-        },
-    )
-    response.raise_for_status()
-    data = response.json()
-    return "".join(block["text"] for block in data["content"] if block["type"] == "text")
+    return call_claude(ANTHROPIC_API_KEY, model, prompt, 900)
 
 def main():
     with open("clients.yaml") as f:
-        clients = yaml.safe_load(f)["clients"]
+        config = yaml.safe_load(f)
+        clients = config["clients"]
+        business = config.get("business", {})
+
+    model = business.get("anthropic_model", "claude-sonnet-4-6")
 
     month_str = datetime.now(timezone.utc).strftime("%Y-%m")
     period_label = datetime.now(timezone.utc).strftime("%B %Y")
@@ -76,7 +66,7 @@ def main():
             print(f"Could not fetch site content for {client['name']} - skipping.")
             continue
 
-        drafts = draft_social_posts(client["name"], site_text)
+        drafts = draft_social_posts(client["name"], site_text, model)
         if not drafts:
             continue
 
@@ -93,6 +83,7 @@ def main():
             contact_name=client["name"],
             sender_name="Danny",
             content_type="social_caption",
+            model=model,
         )
         qc_note = ""
         if not qc_result["passed"]:

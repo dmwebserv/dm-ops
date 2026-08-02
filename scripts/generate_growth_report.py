@@ -1,9 +1,9 @@
 import json
 import os
 import yaml
-import requests
 from datetime import datetime, timezone
 from qc_review import qc_review
+from anthropic_client import call_claude
 
 ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
 
@@ -15,7 +15,7 @@ def load_latest_findings(client_id):
             return r
     return None
 
-def draft_growth_report(client_name, contact_name, sender_name, findings):
+def draft_growth_report(client_name, contact_name, sender_name, findings, model):
     if not findings:
         return None
 
@@ -36,22 +36,7 @@ Raw technical findings from an automated website scan (severity: high/medium/low
 
 Task: pick the THREE actions most likely to improve this website's search visibility or user experience, ranked by impact. For each action, explain in one or two plain-English sentences why it matters for the business (e.g. more enquiries, better first impressions, easier to find on Google) - not technical jargon. Do not just list every finding; be selective, and skip anything trivial low-impact even if it's in the data. If there are genuinely fewer than three meaningful actions, only list the ones that matter. End with one encouraging closing sentence. Keep the whole thing under 220 words. Do not invent findings not present in the data."""
 
-    response = requests.post(
-        "https://api.anthropic.com/v1/messages",
-        headers={
-            "x-api-key": ANTHROPIC_API_KEY,
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-        },
-        json={
-            "model": "claude-sonnet-4-6",
-            "max_tokens": 700,
-            "messages": [{"role": "user", "content": prompt}],
-        },
-    )
-    response.raise_for_status()
-    data = response.json()
-    return "".join(block["text"] for block in data["content"] if block["type"] == "text")
+    return call_claude(ANTHROPIC_API_KEY, model, prompt, 700)
 
 def main():
     with open("clients.yaml") as f:
@@ -60,6 +45,7 @@ def main():
         business = config.get("business", {})
 
     sender_name = business.get("sender_name", "Your web team")
+    model = business.get("anthropic_model", "claude-sonnet-4-6")
 
     period_label = datetime.now(timezone.utc).strftime("%B %Y")
     month_str = datetime.now(timezone.utc).strftime("%Y-%m")
@@ -77,7 +63,7 @@ def main():
             print(f"No SEO findings for {client['name']} - skipping (may already be clean).")
             continue
 
-        report_text = draft_growth_report(client["name"], contact_name, sender_name, findings_record["findings"])
+        report_text = draft_growth_report(client["name"], contact_name, sender_name, findings_record["findings"], model)
         if not report_text:
             continue
 
@@ -100,6 +86,7 @@ def main():
             },
             contact_name=contact_name,
             sender_name=sender_name,
+            model=model,
         )
         qc_note = ""
         if not qc_result["passed"]:
