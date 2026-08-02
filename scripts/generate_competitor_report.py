@@ -25,9 +25,9 @@ No competitors configured under business.competitors produces nothing at all.
 import json
 import os
 import yaml
-import requests
 from datetime import datetime, timezone
 from qc_review import qc_review
+from anthropic_client import call_claude
 
 ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
 
@@ -65,7 +65,7 @@ def format_changes(competitors):
     return "\n\n".join(blocks)
 
 
-def draft_briefing(sender_name, period_label, competitors):
+def draft_briefing(sender_name, period_label, competitors, model):
     changes_text = format_changes(competitors)
 
     prompt = f"""You are writing a short internal briefing for {sender_name}, a solo freelance web developer, about what their own competitors - other web design studios and agencies in their market - have changed on their websites this month. Nobody but {sender_name} will read it. It is not a client-facing document and it is not a sales pitch.
@@ -94,22 +94,7 @@ Style rules:
 - If you do have something to report, keep it under 200 words: what changed, on whose site, and one plain sentence on why it might matter for DM Web Services. Do not recommend a course of action.
 - Do not ask any questions."""
 
-    response = requests.post(
-        "https://api.anthropic.com/v1/messages",
-        headers={
-            "x-api-key": ANTHROPIC_API_KEY,
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-        },
-        json={
-            "model": "claude-sonnet-4-6",
-            "max_tokens": 700,
-            "messages": [{"role": "user", "content": prompt}],
-        },
-    )
-    response.raise_for_status()
-    data = response.json()
-    return "".join(block["text"] for block in data["content"] if block["type"] == "text")
+    return call_claude(ANTHROPIC_API_KEY, model, prompt, 700)
 
 
 def main():
@@ -117,6 +102,7 @@ def main():
         business = yaml.safe_load(f).get("business", {})
 
     sender_name = business.get("sender_name", "Your web team")
+    model = business.get("anthropic_model", "claude-sonnet-4-6")
 
     if not business.get("competitors"):
         print("No competitors configured in clients.yaml - nothing to report.")
@@ -138,7 +124,7 @@ def main():
         print("No competitor changes detected - no briefing.")
         return
 
-    briefing = draft_briefing(sender_name, period_label, competitors)
+    briefing = draft_briefing(sender_name, period_label, competitors, model)
 
     checked_names = ", ".join(c["name"] for c in competitors)
     full_doc = (
@@ -165,6 +151,7 @@ def main():
         contact_name=sender_name,
         sender_name=sender_name,
         content_type="internal_briefing",
+        model=model,
     )
     qc_note = ""
     if not qc_result["passed"]:
