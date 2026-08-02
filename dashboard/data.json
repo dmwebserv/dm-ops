@@ -76,8 +76,29 @@
     }
   ],
   "competitors": {
-    "configured": false,
-    "records": []
+    "configured": true,
+    "records": [
+      {
+        "name": "RIOT Studio",
+        "url": "https://riotcolchester.com/pricing",
+        "status": "baseline",
+        "compared_to": null,
+        "lines_captured": 63
+      },
+      {
+        "name": "Chris Allen",
+        "url": "https://achris.co.uk/services/",
+        "status": "error",
+        "error": "HTTP 403"
+      },
+      {
+        "name": "Patrick Stephen Ltd",
+        "url": "https://www.patrickstephen.co.uk/design-print-clacton-on-sea",
+        "status": "baseline",
+        "compared_to": null,
+        "lines_captured": 56
+      }
+    ]
   },
   "runs": {
     "claude.yml": {
@@ -87,13 +108,13 @@
     },
     "competitor-intel.yml": {
       "state": "success",
-      "when": "2026-08-01T23:54:04Z",
-      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30724197300"
+      "when": "2026-08-02T00:06:09Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30724593628"
     },
     "dashboard.yml": {
       "state": "in_progress",
-      "when": "2026-08-01T23:55:43Z",
-      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30724262722"
+      "when": "2026-08-02T00:06:47Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30724618693"
     },
     "growth-report.yml": {
       "state": "success",
