@@ -5,7 +5,13 @@ business:
   test_email: danny@dmwebservices.co.uk
   force_send_for_testing: true
   care_plan_monthly_value: 30
-  competitors: []
+  competitors:
+    - name: "RIOT Studio"
+      url: "https://riotcolchester.com/pricing"
+    - name: "Chris Allen"
+      url: "https://achris.co.uk/services/"
+    - name: "Patrick Stephen Ltd"
+      url: "https://www.patrickstephen.co.uk/design-print-clacton-on-sea"
 
 clients:
   - id: lwp
