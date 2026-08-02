@@ -1,0 +1,26 @@
+{
+  "checked_at": "2026-08-02T00:06:03.115550+00:00",
+  "date": "2026-08-02",
+  "competitors": [
+    {
+      "name": "RIOT Studio",
+      "url": "https://riotcolchester.com/pricing",
+      "status": "baseline",
+      "compared_to": null,
+      "lines_captured": 63
+    },
+    {
+      "name": "Chris Allen",
+      "url": "https://achris.co.uk/services/",
+      "status": "error",
+      "error": "HTTP 403"
+    },
+    {
+      "name": "Patrick Stephen Ltd",
+      "url": "https://www.patrickstephen.co.uk/design-print-clacton-on-sea",
+      "status": "baseline",
+      "compared_to": null,
+      "lines_captured": 56
+    }
+  ]
+}
