@@ -10,27 +10,27 @@
       "name": "LWP Painting & Decorating",
       "url": "https://lwppaintingdecorating.co.uk",
       "status": "ok",
-      "ssl_days_left": 45,
-      "response_ms": 264,
+      "ssl_days_left": 44,
+      "response_ms": 253,
       "errors": [],
-      "checked_at": "2026-08-01T09:52:25.569517+00:00"
+      "checked_at": "2026-08-02T09:50:36.168923+00:00"
     },
     {
       "id": "kcm",
       "name": "KCM Cleaning",
       "url": "https://kcmcleaning.co.uk",
       "status": "needs_review",
-      "ssl_days_left": 50,
-      "response_ms": 288,
+      "ssl_days_left": 49,
+      "response_ms": 244,
       "errors": [
         "2 broken link(s) found"
       ],
-      "checked_at": "2026-08-01T09:52:26.331461+00:00"
+      "checked_at": "2026-08-02T09:50:37.272945+00:00"
     }
   ],
   "history": {
-    "days": 2,
-    "checks": 4,
+    "days": 3,
+    "checks": 6,
     "uptime_pct": 100.0,
     "daily": [
       {
@@ -39,6 +39,10 @@
       },
       {
         "date": "2026-08-01",
+        "pct": 100.0
+      },
+      {
+        "date": "2026-08-02",
         "pct": 100.0
       }
     ]
@@ -113,8 +117,8 @@
     },
     "dashboard.yml": {
       "state": "in_progress",
-      "when": "2026-08-02T00:06:47Z",
-      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30724618693"
+      "when": "2026-08-03T10:44:39Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30806755118"
     },
     "growth-report.yml": {
       "state": "success",
@@ -133,8 +137,8 @@
     },
     "site-checks.yml": {
       "state": "success",
-      "when": "2026-08-01T09:52:31Z",
-      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30694588282"
+      "when": "2026-08-02T09:50:44Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/30742555805"
     },
     "social-drafts.yml": {
       "state": "success",
