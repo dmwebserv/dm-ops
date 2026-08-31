@@ -10,37 +10,29 @@
       "name": "LWP Painting & Decorating",
       "url": "https://lwppaintingdecorating.co.uk",
       "status": "ok",
-      "ssl_days_left": 84,
-      "response_ms": 355,
+      "ssl_days_left": 77,
+      "response_ms": 513,
       "errors": [],
-      "checked_at": "2026-08-23T08:21:08.864495+00:00"
+      "checked_at": "2026-08-30T13:27:11.192082+00:00"
     },
     {
       "id": "kcm",
       "name": "KCM Cleaning",
       "url": "https://kcmcleaning.co.uk",
       "status": "needs_review",
-      "ssl_days_left": 89,
-      "response_ms": 236,
+      "ssl_days_left": 81,
+      "response_ms": 261,
       "errors": [
         "2 broken link(s) found"
       ],
-      "checked_at": "2026-08-23T08:21:10.126220+00:00"
+      "checked_at": "2026-08-30T13:27:12.251048+00:00"
     }
   ],
   "history": {
-    "days": 24,
-    "checks": 48,
+    "days": 29,
+    "checks": 58,
     "uptime_pct": 100.0,
     "daily": [
-      {
-        "date": "2026-07-31",
-        "pct": 100.0
-      },
-      {
-        "date": "2026-08-01",
-        "pct": 100.0
-      },
       {
         "date": "2026-08-02",
         "pct": 100.0
@@ -128,6 +120,34 @@
       {
         "date": "2026-08-23",
         "pct": 100.0
+      },
+      {
+        "date": "2026-08-24",
+        "pct": 100.0
+      },
+      {
+        "date": "2026-08-25",
+        "pct": 100.0
+      },
+      {
+        "date": "2026-08-26",
+        "pct": 100.0
+      },
+      {
+        "date": "2026-08-27",
+        "pct": 100.0
+      },
+      {
+        "date": "2026-08-28",
+        "pct": 100.0
+      },
+      {
+        "date": "2026-08-29",
+        "pct": 100.0
+      },
+      {
+        "date": "2026-08-30",
+        "pct": 100.0
       }
     ]
   },
@@ -145,7 +165,7 @@
       ],
       "low": [],
       "total": 1,
-      "checked_at": "2026-08-17T08:46:45.071634+00:00"
+      "checked_at": "2026-08-24T08:51:32.131631+00:00"
     },
     {
       "id": "kcm",
@@ -160,7 +180,7 @@
       ],
       "low": [],
       "total": 1,
-      "checked_at": "2026-08-17T08:46:45.533750+00:00"
+      "checked_at": "2026-08-24T08:51:33.777938+00:00"
     }
   ],
   "competitors": {
@@ -201,8 +221,8 @@
     },
     "dashboard.yml": {
       "state": "in_progress",
-      "when": "2026-08-24T07:58:33Z",
-      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/32703983132"
+      "when": "2026-08-31T14:54:46Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/33405385016"
     },
     "growth-report.yml": {
       "state": "success",
@@ -216,13 +236,13 @@
     },
     "seo-checks.yml": {
       "state": "success",
-      "when": "2026-08-17T08:46:51Z",
-      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/32011969549"
+      "when": "2026-08-24T08:51:39Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/32708412674"
     },
     "site-checks.yml": {
       "state": "success",
-      "when": "2026-08-23T08:21:17Z",
-      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/32628022071"
+      "when": "2026-08-30T13:27:19Z",
+      "url": "https://github.com/dmwebserv/dm-ops/actions/runs/33314214979"
     },
     "social-drafts.yml": {
       "state": "success",
