@@ -1,0 +1,26 @@
+HOLD FOR REVIEW - reason: social drafts always need a human pass (photo pairing, tone check) before posting.
+
+QC flagged:
+- 'Dulux Trade Egyptian Cotton' is not in the source facts and appears to be invented detail.
+- 'Frinton-on-Sea, Harwich and Clacton' are specific towns not mentioned in the source facts.
+
+# LWP Painting & Decorating - Social Post Drafts (October 2026)
+
+**Post 1: Specific service - wall panelling**
+Custom picture-style wall panelling, finished in Dulux Trade Egyptian Cotton. It's one of those jobs that completely changes how a room feels - and the prep and painting matter just as much as the panelling itself. Based in Essex and Suffolk - get in touch if you've got something similar in mind.
+Suggested image: the finished wall panelling before/after shot from the website
+
+---
+
+**Post 2: Trust and credibility - client reviews**
+A few kind words from recent clients across Frinton-on-Sea, Harwich and Clacton mean a lot. Every job is different, but the aim is always the same - good communication, clean work, and leaving the place looking better than we found it. All reviews are on the website if you want to take a look.
+Suggested image: a finished interior room shot showing clean, tidy work - ideally something recently completed
+
+---
+
+**Post 3: Call to action - exteriors and larger projects**
+LWP now takes on mostly larger-scale work - full exterior repaints, new builds, renovations and commercial fit-outs across Essex and Suffolk - though individual rooms are still considered when the timing works. If you've got a project coming up, a free site visit and quote costs nothing. Call or message on WhatsApp: 07757 794585.
+Suggested image: an exterior repaint in progress or a finished front-of-property shot
+
+---
+*Drafted from current website content. Pair with real photos before posting - do not post without reviewing and adding actual images.*
